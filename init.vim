@@ -27,7 +27,7 @@ set signcolumn=yes
 set colorcolumn=80
 
 call plug#begin('~/.vim/plugged')
-" Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'gruvbox-community/gruvbox'
 
 Plug 'tpope/vim-fugitive'
@@ -40,6 +40,8 @@ Plug 'docunext/closetag.vim'
 Plug 'tpope/vim-commentary'
 
 Plug 'thaerkh/vim-indentguides'
+
+Plug 'neovim/nvim-lspconfig'
 call plug#end()
 
 let g:indentguides_spacechar = '⎸' " 'LEFT VERTICAL BOX LINE' (U+23B8)
