@@ -22,6 +22,8 @@ Plug 'thaerkh/vim-indentguides'
 
 Plug 'neovim/nvim-lspconfig'
 
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 call plug#end()
 ]])
 
