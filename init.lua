@@ -12,6 +12,7 @@ require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   use 'jiangmiao/auto-pairs'
+  use 'tpope/vim-surround'
 
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -205,6 +206,7 @@ require('gitsigns').setup {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    file_ignore_patterns = { "node_modules", ".git" },
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -233,6 +235,7 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [D]iagnostics' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
