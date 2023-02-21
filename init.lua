@@ -629,8 +629,8 @@ vim.g.dap_virtual_text = true
 -- ╭──────────────────────────────────────────────────────╮
 -- │ Icons                                                    │
 -- ╰──────────────────────────────────────────────────────╯
-vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
-vim.fn.sign_define('DapStopped', { text = '🔛', texthl = '', linehl = '', numhl = '' })
+vim.fn.sign_define('DapBreakpoint', { text = '🟥', texthl = '', linehl = '', numhl = '' })
+vim.fn.sign_define('DapStopped', { text = '⭐️', texthl = '', linehl = '', numhl = '' })
 
 -- ╭──────────────────────────────────────────────────────╮
 -- │ Keybindings                                              │
@@ -732,3 +732,14 @@ dap.configurations.typescriptreact = {
     webRoot = '${workspaceFolder}'
   }
 }
+
+-- noremap <Leader>y "+y
+-- noremap <Leader>p "+p
+-- noremap <Leader>d "+d
+
+vim.keymap.set( "n", "<leader>y", '"+y', { noremap = true, desc='Yank to clipboard' })
+
+vim.cmd [[
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+]]
