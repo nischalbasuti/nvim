@@ -80,6 +80,7 @@ require('packer').startup(function(use)
 
   use { "nvim-telescope/telescope-file-browser.nvim" }
   use 'nvim-tree/nvim-web-devicons'
+  use 'nvim-tree/nvim-tree.lua'
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -91,6 +92,36 @@ require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
+
+-- nvim-tree stuff
+--
+-- disable netrw at the very start of your init.lua (strongly advised)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- set termguicolors to enable highlight groups
+vim.opt.termguicolors = true
+
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  view = {
+    width = 30,
+    mappings = {
+      list = {
+        { key = "u", action = "dir_up" },
+      },
+    },
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
+vim.keymap.set( "n", "<leader>fb", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+
+vim.api.nvim_set_keymap("n", "<leader>dc", "<CMD>lua require('dap').continue()<CR>", { noremap = true, silent = true })
 
 -- When we are bootstrapping a configuration, it doesn't
 -- make sense to execute the rest of the init.lua.
@@ -261,8 +292,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
--- vim.api.nvim_set_keymap( "n", "<leader>fb", ":Telescope file_browser<CR>", { noremap = true })
-vim.keymap.set( "n", "<leader>fb", ":Telescope file_browser<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+vim.keymap.set( "n", "<leader>tb", ":Telescope file_browser<CR>", { noremap = true, desc='[F]ile [B]rowser' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
