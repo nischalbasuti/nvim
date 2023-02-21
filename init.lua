@@ -63,6 +63,7 @@ require('packer').startup(function(use)
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
+  use 'APZelos/blamer.nvim'
 
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
@@ -203,6 +204,14 @@ require('indent_blankline').setup {
   char = '┊',
   show_trailing_blankline_indent = false,
 }
+
+-- Git blamer
+vim.g.blamer_enabled = 1
+vim.g.blamer_delay = 500
+vim.g.blamer_date_format = '20%y/%m/%d %H:%M'
+vim.g.blamer_relative_time = 1
+
+vim.cmd [[highlight Blamer guifg=lightgrey]]
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
