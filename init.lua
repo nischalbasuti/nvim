@@ -14,6 +14,8 @@ require('packer').startup(function(use)
   use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
 
+  use 'sunjon/Shade.nvim'
+
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     requires = {
@@ -22,6 +24,8 @@ require('packer').startup(function(use)
       'williamboman/mason-lspconfig.nvim',
       "mfussenegger/nvim-dap",
       "jayp0521/mason-nvim-dap.nvim",
+      "rcarriga/nvim-dap-ui",
+      "theHamsta/nvim-dap-virtual-text",
 
       -- Useful status updates for LSP
       'j-hui/fidget.nvim',
@@ -33,7 +37,13 @@ require('packer').startup(function(use)
 
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+    requires = {
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lsp',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip'
+    },
   }
 
   use { -- Highlight, edit, and navigate code
@@ -52,8 +62,10 @@ require('packer').startup(function(use)
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
+  use 'APZelos/blamer.nvim'
 
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
+  use { "catppuccin/nvim", as = "catppuccin" }
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
@@ -65,6 +77,10 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
+  use { "nvim-telescope/telescope-file-browser.nvim" }
+  use 'nvim-tree/nvim-web-devicons'
+  use 'nvim-tree/nvim-tree.lua'
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -75,6 +91,36 @@ require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
+
+-- nvim-tree stuff
+--
+-- disable netrw at the very start of your init.lua (strongly advised)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- set termguicolors to enable highlight groups
+vim.opt.termguicolors = true
+
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  view = {
+    width = 30,
+    mappings = {
+      list = {
+        { key = "u", action = "dir_up" },
+      },
+    },
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
+vim.keymap.set( "n", "<leader>fb", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+
+vim.api.nvim_set_keymap("n", "<leader>dc", "<CMD>lua require('dap').continue()<CR>", { noremap = true, silent = true })
 
 -- When we are bootstrapping a configuration, it doesn't
 -- make sense to execute the rest of the init.lua.
@@ -174,7 +220,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('lualine').setup {
   options = {
     icons_enabled = false,
-    theme = 'onedark',
+    theme = 'catppuccin',
     component_separators = '|',
     section_separators = '',
   },
@@ -189,6 +235,14 @@ require('indent_blankline').setup {
   char = '┊',
   show_trailing_blankline_indent = false,
 }
+
+-- Git blamer
+vim.g.blamer_enabled = 1
+vim.g.blamer_delay = 500
+vim.g.blamer_date_format = '20%y/%m/%d %H:%M'
+vim.g.blamer_relative_time = 1
+
+vim.cmd [[highlight Blamer guifg=lightgrey]]
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
@@ -218,9 +272,10 @@ require('telescope').setup {
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+pcall(require("telescope").load_extension, "file_browser")
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').oldfiles, { desc = '[S]earch [R]ecently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -235,7 +290,9 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+
+vim.keymap.set( "n", "<leader>tb", ":Telescope file_browser<CR>", { noremap = true, desc='[F]ile [B]rowser' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -443,7 +500,13 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'path' },
+    { name = 'buffer', keyword_length = 4 },
   },
+  experimental = {
+    native_menu = false,
+    ghost_text = true,
+  }
 }
 
 require('dap.breakpoints')
@@ -531,7 +594,7 @@ dapui.setup({
   floating = {
     max_height = nil, -- These can be integers or a float between 0 and 1.
     max_width = nil, -- Floats will be treated as percentage of your screen.
-    border = EcoVim.ui.float.border or "rounded", -- Border style. Can be "single", "double" or "rounded"
+    border = "rounded", -- Border style. Can be "single", "double" or "rounded"
     mappings = {
       close = { "q", "<Esc>" },
     },
@@ -541,7 +604,6 @@ dapui.setup({
     max_type_length = nil, -- Can be integer or nil.
   }
 })
-
 -- ╭──────────────────────────────────────────────────────╮
 -- │ DAP Setup                                                │
 -- ╰──────────────────────────────────────────────────────╯
@@ -550,15 +612,15 @@ dap.set_log_level('TRACE');
 -- Automatically open UI
 dap.listeners.after.event_initialized['dapui_config'] = function()
   dapui.open();
-  shade.toggle();
+  -- shade.toggle();
 end
 dap.listeners.before.event_terminated['dapui_config'] = function()
   dapui.close();
-  shade.toggle();
+  -- shade.toggle();
 end
 dap.listeners.before.event_exited['dapui_config'] = function()
   dapui.close();
-  shade.toggle();
+  -- shade.toggle();
 end
 
 -- Enable virtual text
@@ -573,8 +635,8 @@ vim.fn.sign_define('DapStopped', { text = '⭐️', texthl = '', linehl = '', nu
 -- ╭──────────────────────────────────────────────────────╮
 -- │ Keybindings                                              │
 -- ╰──────────────────────────────────────────────────────╯
-vim.api.nvim_set_keymap("n", "<leader>db", ":lua require('dap').toggle_breakpoint()<CR>",
-  { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>db', require('dap').toggle_breakpoint, { desc = 'Add [D]ebugger [B]reakpoint' })
+-- vim.api.nvim_set_keymap("n", "<leader>db", "<CMD>lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>dc", "<CMD>lua require('dap').continue()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>dd", "<CMD>lua require('dap').continue()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>dh", "<CMD>lua require('dapui').eval()<CR>",
@@ -604,6 +666,22 @@ dap.adapters.chrome = {
 -- ╭──────────────────────────────────────────────────────╮
 -- │ Configurations                                           │
 -- ╰───────────────────────────────────────────────────────╯
+dap.configurations.typescript = {
+    {
+        type = "node2",
+        request = "launch",
+        name = "Launch file",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+    },
+    {
+        type = "node2",
+        request = "attach",
+        name = "Attach",
+        processId = require'dap.utils'.pick_process,
+        cwd = "${workspaceFolder}",
+    }
+}
 dap.configurations.javascript = {
   {
     type = 'node2';
@@ -616,18 +694,18 @@ dap.configurations.javascript = {
   }
 }
 
-dap.configurations.javascript = {
-  {
-    type = 'chrome',
-    request = 'attach',
-    program = '${file}',
-    cwd = vim.fn.getcwd(),
-    sourceMaps = true,
-    protocol = 'inspector',
-    port = 9222,
-    webRoot = '${workspaceFolder}'
-  }
-}
+-- dap.configurations.javascript = {
+--   {
+--     type = 'chrome',
+--     request = 'attach',
+--     program = '${file}',
+--     cwd = vim.fn.getcwd(),
+--     sourceMaps = true,
+--     protocol = 'inspector',
+--     port = 9222,
+--     webRoot = '${workspaceFolder}'
+--   }
+-- }
 
 dap.configurations.javascriptreact = {
   {
@@ -655,4 +733,13 @@ dap.configurations.typescriptreact = {
   }
 }
 
+-- noremap <Leader>y "+y
+-- noremap <Leader>p "+p
+-- noremap <Leader>d "+d
 
+vim.keymap.set( "n", "<leader>y", '"+y', { noremap = true, desc='Yank to clipboard' })
+
+vim.cmd [[
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+]]
