@@ -16,6 +16,15 @@ require('packer').startup(function(use)
 
   use 'sunjon/Shade.nvim'
 
+  use {
+    "SmiteshP/nvim-navbuddy",
+    requires = {
+      "neovim/nvim-lspconfig",
+      "SmiteshP/nvim-navic",
+      "MunifTanjim/nui.nvim"
+    }
+  }
+
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     requires = {
@@ -52,6 +61,8 @@ require('packer').startup(function(use)
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   }
+
+  use 'RRethy/vim-illuminate'
 
   use { -- Additional text objects via treesitter
     'nvim-treesitter/nvim-treesitter-textobjects',
@@ -101,24 +112,54 @@ vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
+local HEIGHT_RATIO = 0.8  -- You can change this
+local WIDTH_RATIO = 0.5   -- You can change this too
+
 require("nvim-tree").setup({
-  sort_by = "case_sensitive",
-  view = {
-    width = 30,
-    mappings = {
-      list = {
-        { key = "u", action = "dir_up" },
-      },
+    sort_by = "case_sensitive",
+    view = {
+        float = {
+            enable = true,
+            open_win_config = function()
+                local screen_w = vim.opt.columns:get()
+                local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+                local window_w = screen_w * WIDTH_RATIO
+                local window_h = screen_h * HEIGHT_RATIO
+                local window_w_int = math.floor(window_w)
+                local window_h_int = math.floor(window_h)
+                local center_x = (screen_w - window_w) / 2
+                local center_y = ((vim.opt.lines:get() - window_h) / 2)
+
+                - vim.opt.cmdheight:get()
+
+                return {
+                    border = 'rounded',
+                    relative = 'editor',
+                    row = center_y,
+                    col = center_x,
+                    width = window_w_int,
+                    height = window_h_int,
+
+                }
+            end,
+        },
+        width = function()
+            return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
+        end,
+        mappings = {
+            list = {
+                { key = "u", action = "dir_up" },
+                { key = "n", action = "create" },
+            },
+        },
     },
-  },
-  renderer = {
-    group_empty = true,
-  },
-  filters = {
-    dotfiles = true,
-  },
+    renderer = {
+        group_empty = true,
+    },
+    filters = {
+        dotfiles = true,
+    },
 })
-vim.keymap.set( "n", "<leader>fb", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })
 
 vim.api.nvim_set_keymap("n", "<leader>dc", "<CMD>lua require('dap').continue()<CR>", { noremap = true, silent = true })
 
@@ -231,9 +272,34 @@ require('Comment').setup()
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
+vim.opt.list = true
+vim.opt.listchars:append "eol:↴"
+vim.opt.listchars:append "space:⋅"
+
+vim.opt.termguicolors = true
+-- vim.cmd [[highlight IndentBlanklineIndent1 guifg=#E06C75 gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineIndent2 guifg=#E5C07B gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineIndent3 guifg=#98C379 gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineIndent4 guifg=#56B6C2 gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineIndent5 guifg=#61AFEF gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineIndent6 guifg=#C678DD gui=nocombine]]
+
+
 require('indent_blankline').setup {
-  char = '┊',
+  -- char = '┊',
   show_trailing_blankline_indent = false,
+  show_end_of_line = true,
+  space_char_blankline = " ",
+  show_current_context = true,
+  show_current_context_start = true,
+  -- char_highlight_list = {
+  --   "IndentBlanklineIndent1",
+  --   "IndentBlanklineIndent2",
+  --   "IndentBlanklineIndent3",
+  --   "IndentBlanklineIndent4",
+  --   "IndentBlanklineIndent5",
+  --   "IndentBlanklineIndent6",
+  -- },
 }
 
 -- Git blamer
@@ -241,8 +307,10 @@ vim.g.blamer_enabled = 1
 vim.g.blamer_delay = 500
 vim.g.blamer_date_format = '20%y/%m/%d %H:%M'
 vim.g.blamer_relative_time = 1
+vim.g.blamer_show_in_visual_modes = 0
+vim.g.blamer_prefix = ' > '
 
-vim.cmd [[highlight Blamer guifg=lightgrey]]
+-- vim.cmd [[highlight Blamer guifg=lightgrey]]
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
@@ -286,6 +354,7 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
@@ -384,7 +453,7 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  -- nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
@@ -743,3 +812,113 @@ vim.cmd [[
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 ]]
+
+vim.keymap.set( "n", "<leader>b", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+
+vim.cmd [[set expandtab]]
+
+
+
+
+local navbuddy = require("nvim-navbuddy")
+local actions = require("nvim-navbuddy.actions")
+
+navbuddy.setup {
+    window = {
+        border = "single",  -- "rounded", "double", "solid", "none"
+                            -- or an array with eight chars building up the border in a clockwise fashion
+                            -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
+        size = "60%",
+        position = "50%",
+        sections = {
+            left = {
+                size = "20%",
+                border = nil -- You can set border style for each section individually as well.
+            },
+            mid = {
+                size = "40%",
+                border = nil
+            },
+            right = {
+                -- No size option for right most section. It fills to
+                -- remaining area.
+                border = nil
+            }
+        }
+    },
+    icons = {
+        File          = " ",
+        Module        = " ",
+        Namespace     = " ",
+        Package       = " ",
+        Class         = " ",
+        Method        = " ",
+        Property      = " ",
+        Field         = " ",
+        Constructor   = " ",
+        Enum          = "練",
+        Interface     = "練",
+        Function      = " ",
+        Variable      = " ",
+        Constant      = " ",
+        String        = " ",
+        Number        = " ",
+        Boolean       = "◩ ",
+        Array         = " ",
+        Object        = " ",
+        Key           = " ",
+        Null          = "ﳠ ",
+        EnumMember    = " ",
+        Struct        = " ",
+        Event         = " ",
+        Operator      = " ",
+        TypeParameter = " ",
+    },
+    mappings = {
+        ["<esc>"] = actions.close,        -- Close and cursor to original location
+        ["q"] = actions.close,
+
+        ["j"] = actions.next_sibling,     -- down
+        ["k"] = actions.previous_sibling, -- up
+
+        ["h"] = actions.parent,           -- Move to left panel
+        ["l"] = actions.children,         -- Move to right panel
+
+        ["v"] = actions.visual_name,      -- Visual selection of name
+        ["V"] = actions.visual_scope,     -- Visual selection of scope
+
+        ["y"] = actions.yank_name,        -- Yank the name to system clipboard "+
+        ["Y"] = actions.yank_scope,       -- Yank the scope to system clipboard "+
+
+        ["i"] = actions.insert_name,      -- Insert at start of name
+        ["I"] = actions.insert_scope,     -- Insert at start of scope
+
+        ["a"] = actions.append_name,      -- Insert at end of name
+        ["A"] = actions.append_scope,     -- Insert at end of scope
+
+        ["r"] = actions.rename,           -- Rename currently focused symbol
+
+        ["d"] = actions.delete,           -- Delete scope
+
+        ["f"] = actions.fold_create,      -- Create fold of current scope
+        ["F"] = actions.fold_delete,      -- Delete fold of current scope
+
+        ["c"] = actions.comment,          -- Comment out current scope
+
+        ["<enter>"] = actions.select,     -- Goto selected symbol
+        ["o"] = actions.select,
+    },
+    lsp = {
+        auto_attach = true,  -- If set to true, you don't need to manually use attach function
+        preference = nil  -- list of lsp server names in order of preference
+    }
+}
+
+
+vim.keymap.set( "n", "<leader>nb", ":Navbuddy<CR>", { noremap = true, desc='[N]av[B]uddy' })
+
+vim.keymap.set('n', '<leader>gr', require('telescope.builtin').lsp_references, { desc = '[G]oto [R]eferences' })
+
+
+-- switch to last buffer
+vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='[N]av[B]uddy' })
