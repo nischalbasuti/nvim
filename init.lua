@@ -11,6 +11,20 @@ require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
 
+  use 'ddrscott/vim-side-search'
+
+  use({
+  "jackMort/ChatGPT.nvim",
+    config = function()
+      require("chatgpt").setup()
+    end,
+    requires = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim"
+    }
+})
+
   use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
 
@@ -37,7 +51,7 @@ require('packer').startup(function(use)
       "theHamsta/nvim-dap-virtual-text",
 
       -- Useful status updates for LSP
-      'j-hui/fidget.nvim',
+      {'j-hui/fidget.nvim', tag = "legacy"},
 
       -- Additional lua configuration, makes nvim stuff amazing
       'folke/neodev.nvim',
@@ -77,6 +91,10 @@ require('packer').startup(function(use)
   use 'lewis6991/gitsigns.nvim'
   use 'APZelos/blamer.nvim'
 
+  use {'akinsho/git-conflict.nvim', tag = "*", config = function()
+    require('git-conflict').setup()
+  end}
+
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use { "catppuccin/nvim", as = "catppuccin" }
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
@@ -89,10 +107,11 @@ require('packer').startup(function(use)
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
-
   use { "nvim-telescope/telescope-file-browser.nvim" }
   use 'nvim-tree/nvim-web-devicons'
   use 'nvim-tree/nvim-tree.lua'
+
+  use {'nvim-telescope/telescope-ui-select.nvim' }
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -117,8 +136,28 @@ vim.opt.termguicolors = true
 local HEIGHT_RATIO = 0.8  -- You can change this
 local WIDTH_RATIO = 0.5   -- You can change this too
 
+
+local function my_on_attach(bufnr)
+    local api = require "nvim-tree.api"
+
+    local function opts(desc)
+        return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    -- default mappings
+    api.config.mappings.default_on_attach(bufnr)
+
+    -- custom mappings
+    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+    vim.keymap.set('n', 'n',     api.fs.create,                  opts('New File'))
+    -- vim.keymap.set('n', 'u', api.fs.dir_up,        opts('Move Dir Up'))
+    vim.keymap.set( "n", "<Esc>", ":NvimTreeClose<CR>", opts('Close'))
+end
+
 require("nvim-tree").setup({
     sort_by = "case_sensitive",
+    on_attach = my_on_attach,
     view = {
         float = {
             enable = true,
@@ -148,12 +187,6 @@ require("nvim-tree").setup({
         width = function()
             return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
         end,
-        mappings = {
-            list = {
-                { key = "u", action = "dir_up" },
-                { key = "n", action = "create" },
-            },
-        },
     },
     renderer = {
         group_empty = true,
@@ -330,11 +363,15 @@ require('gitsigns').setup {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    path_display={"truncate"},
     file_ignore_patterns = { "node_modules", ".git" },
     mappings = {
       i = {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+      },
+      n = {
+        ['<C-d>'] = 'delete_buffer',
       },
     },
   },
@@ -343,6 +380,8 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require("telescope").load_extension, "file_browser")
+
+pcall(require("telescope").load_extension("ui-select"))
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').oldfiles, { desc = '[S]earch [R]ecently opened files' })
@@ -355,6 +394,7 @@ vim.keymap.set('n', '<leader>/', function()
   })
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
+vim.keymap.set('n', '<leader>tr', require('telescope.builtin').resume, { desc = '[T]elescope [R]esume' })
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
@@ -369,8 +409,7 @@ vim.keymap.set( "n", "<leader>tb", ":Telescope file_browser<CR>", { noremap = tr
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'vim' },
-
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'vim' },
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
   incremental_selection = {
@@ -428,15 +467,28 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
+
 -- LSP settings.
+--
+local navic = require("nvim-navic")
+local navbuddy = require("nvim-navbuddy")
+
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+    -- print("lsconfig on_attach", client, bufnr)
+
+    if client.server_capabilities.documentSymbolProvider then
+        navic.attach(client, bufnr)
+        navbuddy.attach(client, bufnr)
+    end
+
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -455,15 +507,17 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ca', function() vim.lsp.buf.code_action() end, '[C]ode [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  -- nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+  nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+
+  nmap('<leader>i', vim.lsp.buf.hover, '[I]nspect')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -491,12 +545,12 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
+  -- sumneko_lua = {
+  --   Lua = {
+  --     workspace = { checkThirdParty = false },
+  --     telemetry = { enable = false },
+  --   },
+  -- },
 }
 
 -- Setup neovim lua configuration
@@ -569,10 +623,10 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp' },
+    { name = 'nvim_lsp', priority = 8 },
     { name = 'luasnip' },
-    { name = 'path' },
-    { name = 'buffer', keyword_length = 4 },
+    { name = 'path', priority = 2 },
+    { name = 'buffer', priority = 1, keyword_length = 4 },
   },
   experimental = {
     native_menu = false,
@@ -728,10 +782,58 @@ dap.adapters.node2 = {
 }
 
 -- Chrome
-dap.adapters.chrome = {
+-- dap.adapters.chrome = {
+--   type = 'executable',
+--   command = 'node',
+--   args = { vim.fn.stdpath "data" .. '/mason/packages/chrome-debug-adapter/out/src/chromeDebug.js' };
+-- }
+
+-- dap.adapters.chrome = {
+--   type = 'executable',
+--   command = 'node',
+--   args = { vim.fn.stdpath "data" .. '/mason/packages/chrome-debug-adapter/out/src/chromeDebug.js --remote-debugging-port=9222' };
+-- }
+
+dap.adapters.firefox = {
+    type = 'executable',
+    command = 'bash',
+    args ={ '/home/nischal/.local/share/nvim/mason/packages/firefox-debug-adapter/firefox-debug-adapter'};
+}
+--
+
+-- require ('mason-nvim-dap').setup({
+--     ensure_installed = {'firefox',},
+--     handlers = {}, -- sets up dap in the predefined manner
+-- })
+dap.configurations.javascript = {
+  {
+    type = 'firefox',
+    request = 'attach',
+    name = 'Attach to Firefox',
+    host = 'localhost',
+    port = 9222,
+    url = 'http://localhost:8000',
+  },
+}
+
+dap.adapters.lldb = {
   type = 'executable',
-  command = 'node',
-  args = { vim.fn.stdpath "data" .. '/mason/packages/chrome-debug-adapter/out/src/chromeDebug.js' };
+  command =  vim.fn.stdpath "data" .. '/mason/packages/codelldb/extension/lldb/bin/lldb' ,
+  args = {}
+
+  -- command = 'lldb',
+  -- args = { vim.fn.stdpath "data" .. '/mason/packages/codelldb/extension/lldb/bin/lldb' };
+  -- /home/nischal/.local/share/nvim/mason/packages/codelldb/extension/lldb/bin/lldb
+}
+dap.configurations.rust = {
+    {
+        name= "Debug Rust",
+        type = "lldb",
+        request = "launch",
+        program = "${workspaceFolder}/target/debug/${workspaceRootFolderName}",
+        -- args= [],
+        cwd= "${workspaceFolder}"
+    }
 }
 
 -- ╭──────────────────────────────────────────────────────╮
@@ -753,17 +855,17 @@ dap.configurations.typescript = {
         cwd = "${workspaceFolder}",
     }
 }
-dap.configurations.javascript = {
-  {
-    type = 'node2';
-    request = 'launch';
-    program = '${file}';
-    cwd = vim.fn.getcwd();
-    sourceMaps = true;
-    protocol = 'inspector';
-    console = 'integratedTerminal';
-  }
-}
+-- dap.configurations.javascript = {
+--   {
+--     type = 'node2';
+--     request = 'launch';
+--     program = '${file}';
+--     cwd = vim.fn.getcwd();
+--     sourceMaps = true;
+--     protocol = 'inspector';
+--     console = 'integratedTerminal';
+--   }
+-- }
 
 -- dap.configurations.javascript = {
 --   {
@@ -778,38 +880,39 @@ dap.configurations.javascript = {
 --   }
 -- }
 
-dap.configurations.javascriptreact = {
-  {
-    type = 'chrome',
-    request = 'attach',
-    program = '${file}',
-    cwd = vim.fn.getcwd(),
-    sourceMaps = true,
-    protocol = 'inspector',
-    port = 9222,
-    webRoot = '${workspaceFolder}'
-  }
-}
+-- dap.configurations.javascriptreact = {
+--   {
+--     type = 'chrome',
+--     request = 'attach',
+--     program = '${file}',
+--     cwd = vim.fn.getcwd(),
+--     sourceMaps = true,
+--     protocol = 'inspector',
+--     port = 9222,
+--     webRoot = '${workspaceFolder}'
+--   }
+-- }
+--
+-- dap.configurations.typescriptreact = {
+--   {
+--     type = 'chrome',
+--     request = 'attach',
+--     program = '${file}',
+--     cwd = vim.fn.getcwd(),
+--     sourceMaps = true,
+--     protocol = 'inspector',
+--     port = 9222,
+--     webRoot = '${workspaceFolder}'
+--   }
+-- }
+--
+vim.cmd[[
+noremap <leader>y "+y
+noremap <Leader>p "+p
+noremap <Leader>d "+d
+]]
 
-dap.configurations.typescriptreact = {
-  {
-    type = 'chrome',
-    request = 'attach',
-    program = '${file}',
-    cwd = vim.fn.getcwd(),
-    sourceMaps = true,
-    protocol = 'inspector',
-    port = 9222,
-    webRoot = '${workspaceFolder}'
-  }
-}
-
--- noremap <Leader>y "+y
--- noremap <Leader>p "+p
--- noremap <Leader>d "+d
-
-vim.keymap.set( "n", "<leader>y", '"+y', { noremap = true, desc='Yank to clipboard' })
-
+-- vim.keymap.set( "n", "<leader>y", '"+y', { noremap = true, desc='Yank to clipboard' })
 vim.cmd [[
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
@@ -830,97 +933,151 @@ navbuddy.setup {
         border = "single",  -- "rounded", "double", "solid", "none"
                             -- or an array with eight chars building up the border in a clockwise fashion
                             -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
-        size = "60%",
-        position = "50%",
+        size = "60%",       -- Or table format example: { height = "40%", width = "100%"}
+        position = "50%",   -- Or table format example: { row = "100%", col = "0%"}
+        scrolloff = nil,    -- scrolloff value within navbuddy window
         sections = {
             left = {
                 size = "20%",
-                border = nil -- You can set border style for each section individually as well.
+                border = nil, -- You can set border style for each section individually as well.
             },
             mid = {
                 size = "40%",
-                border = nil
+                border = nil,
             },
             right = {
                 -- No size option for right most section. It fills to
                 -- remaining area.
-                border = nil
+                border = nil,
+                preview = "leaf",  -- Right section can show previews too.
+                                   -- Options: "leaf", "always" or "never"
             }
-        }
+        },
+    },
+    node_markers = {
+        enabled = true,
+        icons = {
+            leaf = "  ",
+            leaf_selected = " → ",
+            branch = " ",
+        },
     },
     icons = {
-        File          = " ",
+        File          = "󰈙 ",
         Module        = " ",
-        Namespace     = " ",
+        Namespace     = "󰌗 ",
         Package       = " ",
-        Class         = " ",
-        Method        = " ",
+        Class         = "󰌗 ",
+        Method        = "󰆧 ",
         Property      = " ",
         Field         = " ",
         Constructor   = " ",
-        Enum          = "練",
-        Interface     = "練",
-        Function      = " ",
-        Variable      = " ",
-        Constant      = " ",
+        Enum          = "󰕘",
+        Interface     = "󰕘",
+        Function      = "󰊕 ",
+        Variable      = "󰆧 ",
+        Constant      = "󰏿 ",
         String        = " ",
-        Number        = " ",
+        Number        = "󰎠 ",
         Boolean       = "◩ ",
-        Array         = " ",
-        Object        = " ",
-        Key           = " ",
-        Null          = "ﳠ ",
+        Array         = "󰅪 ",
+        Object        = "󰅩 ",
+        Key           = "󰌋 ",
+        Null          = "󰟢 ",
         EnumMember    = " ",
-        Struct        = " ",
+        Struct        = "󰌗 ",
         Event         = " ",
-        Operator      = " ",
-        TypeParameter = " ",
+        Operator      = "󰆕 ",
+        TypeParameter = "󰊄 ",
     },
+    use_default_mappings = true,            -- If set to false, only mappings set
+                                            -- by user are set. Else default
+                                            -- mappings are used for keys
+                                            -- that are not set by user
     mappings = {
-        ["<esc>"] = actions.close,        -- Close and cursor to original location
-        ["q"] = actions.close,
+        ["<esc>"] = actions.close(),        -- Close and cursor to original location
+        ["q"] = actions.close(),
 
-        ["j"] = actions.next_sibling,     -- down
-        ["k"] = actions.previous_sibling, -- up
+        ["j"] = actions.next_sibling(),     -- down
+        ["k"] = actions.previous_sibling(), -- up
 
-        ["h"] = actions.parent,           -- Move to left panel
-        ["l"] = actions.children,         -- Move to right panel
+        ["h"] = actions.parent(),           -- Move to left panel
+        ["l"] = actions.children(),         -- Move to right panel
+        ["0"] = actions.root(),             -- Move to first panel
 
-        ["v"] = actions.visual_name,      -- Visual selection of name
-        ["V"] = actions.visual_scope,     -- Visual selection of scope
+        ["v"] = actions.visual_name(),      -- Visual selection of name
+        ["V"] = actions.visual_scope(),     -- Visual selection of scope
 
-        ["y"] = actions.yank_name,        -- Yank the name to system clipboard "+
-        ["Y"] = actions.yank_scope,       -- Yank the scope to system clipboard "+
+        ["y"] = actions.yank_name(),        -- Yank the name to system clipboard "+
+        ["Y"] = actions.yank_scope(),       -- Yank the scope to system clipboard "+
 
-        ["i"] = actions.insert_name,      -- Insert at start of name
-        ["I"] = actions.insert_scope,     -- Insert at start of scope
+        ["i"] = actions.insert_name(),      -- Insert at start of name
+        ["I"] = actions.insert_scope(),     -- Insert at start of scope
 
-        ["a"] = actions.append_name,      -- Insert at end of name
-        ["A"] = actions.append_scope,     -- Insert at end of scope
+        ["a"] = actions.append_name(),      -- Insert at end of name
+        ["A"] = actions.append_scope(),     -- Insert at end of scope
 
-        ["r"] = actions.rename,           -- Rename currently focused symbol
+        ["r"] = actions.rename(),           -- Rename currently focused symbol
 
-        ["d"] = actions.delete,           -- Delete scope
+        ["d"] = actions.delete(),           -- Delete scope
 
-        ["f"] = actions.fold_create,      -- Create fold of current scope
-        ["F"] = actions.fold_delete,      -- Delete fold of current scope
+        ["f"] = actions.fold_create(),      -- Create fold of current scope
+        ["F"] = actions.fold_delete(),      -- Delete fold of current scope
 
-        ["c"] = actions.comment,          -- Comment out current scope
+        ["c"] = actions.comment(),          -- Comment out current scope
 
-        ["<enter>"] = actions.select,     -- Goto selected symbol
-        ["o"] = actions.select,
+        ["<enter>"] = actions.select(),     -- Goto selected symbol
+        ["o"] = actions.select(),
+
+        ["J"] = actions.move_down(),        -- Move focused node down
+        ["K"] = actions.move_up(),          -- Move focused node up
+
+        ["t"] = actions.telescope({         -- Fuzzy finder at current level.
+            layout_config = {               -- All options that can be
+                height = 0.60,              -- passed to telescope.nvim's
+                width = 0.60,               -- default can be passed here.
+                prompt_position = "top",
+                preview_width = 0.50
+            },
+            layout_strategy = "horizontal"
+        }),
+
+        ["g?"] = actions.help(),            -- Open mappings help window
     },
     lsp = {
-        auto_attach = true,  -- If set to true, you don't need to manually use attach function
-        preference = nil  -- list of lsp server names in order of preference
+        auto_attach = false,   -- If set to true, you don't need to manually use attach function
+        preference = nil,      -- list of lsp server names in order of preference
+    },
+    source_buffer = {
+        follow_node = true,    -- Keep the current node in focus on the source buffer
+        highlight = true,      -- Highlight the currently focused node
+        reorient = "smart",    -- "smart", "top", "mid" or "none"
+        scrolloff = nil        -- scrolloff value when navbuddy is open
     }
 }
 
-
 vim.keymap.set( "n", "<leader>nb", ":Navbuddy<CR>", { noremap = true, desc='[N]av[B]uddy' })
-
-vim.keymap.set('n', '<leader>gr', require('telescope.builtin').lsp_references, { desc = '[G]oto [R]eferences' })
+vim.keymap.set('n', '<leader>gr', function () require('telescope.builtin').lsp_references{ path_display = { "truncate" } } end, { desc = '[G]oto [R]eferences' })
 
 
 -- switch to last buffer
-vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='[N]av[B]uddy' })
+vim.keymap.set( "n",
+    "<leader><Tab>",
+    ":e #<CR>",
+    { noremap = true, desc='Switch to last buffer' })
+
+
+-- Automatically source .zshrc on save
+vim.cmd([[
+  autocmd BufWritePost ~/.zshrc !source ~/.zshrc > /dev/null
+]])
+
+vim.cmd([[
+  set colorcolumn=81,121
+]])
+
+require("chatgpt").setup({
+    api_key = "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"
+})
+
+
