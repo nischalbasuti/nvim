@@ -794,27 +794,27 @@ dap.adapters.node2 = {
 --   args = { vim.fn.stdpath "data" .. '/mason/packages/chrome-debug-adapter/out/src/chromeDebug.js --remote-debugging-port=9222' };
 -- }
 
-dap.adapters.firefox = {
-    type = 'executable',
-    command = 'bash',
-    args ={ '/home/nischal/.local/share/nvim/mason/packages/firefox-debug-adapter/firefox-debug-adapter'};
-}
+-- dap.adapters.firefox = {
+--     type = 'executable',
+--     command = 'bash',
+--     args ={ '/home/nischal/.local/share/nvim/mason/packages/firefox-debug-adapter/firefox-debug-adapter'};
+-- }
 --
 
 -- require ('mason-nvim-dap').setup({
 --     ensure_installed = {'firefox',},
 --     handlers = {}, -- sets up dap in the predefined manner
 -- })
-dap.configurations.javascript = {
-  {
-    type = 'firefox',
-    request = 'attach',
-    name = 'Attach to Firefox',
-    host = 'localhost',
-    port = 9222,
-    url = 'http://localhost:8000',
-  },
-}
+-- dap.configurations.javascript = {
+--   {
+--     type = 'firefox',
+--     request = 'attach',
+--     name = 'Attach to Firefox',
+--     host = 'localhost',
+--     port = 9222,
+--     url = 'http://localhost:8000',
+--   },
+-- }
 
 dap.adapters.lldb = {
   type = 'executable',
@@ -840,6 +840,23 @@ dap.configurations.rust = {
 -- │ Configurations                                           │
 -- ╰───────────────────────────────────────────────────────╯
 dap.configurations.typescript = {
+    {
+        type = "node2",
+        request = "launch",
+        name = "Launch file",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+    },
+    {
+        type = "node2",
+        request = "attach",
+        name = "Attach",
+        processId = require'dap.utils'.pick_process,
+        cwd = "${workspaceFolder}",
+    }
+}
+
+dap.configurations.javascript = {
     {
         type = "node2",
         request = "launch",
