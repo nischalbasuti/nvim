@@ -1,38 +1,45 @@
--- require('telescope').setup{
---     defaults = {
---         file_ignore_patterns = { "node_modules", ".git" }
---     }
--- }
---
--- -- You don't need to set any of these options.
--- -- IMPORTANT!: this is only a showcase of how you can set default options!
--- require("telescope").setup {
---   extensions = {
---     file_browser = {
---       theme = "ivy",
---       -- disables netrw and use telescope-file-browser in its place
---       hijack_netrw = true,
---       mappings = {
---         ["i"] = {
---           -- your custom insert mode mappings
---         },
---         ["n"] = {
---           -- your custom normal mode mappings
---         },
---       },
---     },
---   },
--- }
--- -- To get telescope-file-browser loaded and working with telescope,
--- -- you need to call load_extension, somewhere after setup function:
--- require("telescope").load_extension "file_browser"
---
---
--- local builtin = require('telescope.builtin')
--- vim.keymap.set('n', '<C-p>', builtin.find_files, {})
--- vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
--- vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
--- vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
---
--- vim.api.nvim_set_keymap("n", "<space>fb", ":Telescope file_browser", { noremap = true })
---
+-- [[ Configure Telescope ]]
+-- See `:help telescope` and `:help telescope.setup()`
+require('telescope').setup {
+  defaults = {
+    path_display={"truncate"},
+    file_ignore_patterns = { "node_modules", ".git" },
+    mappings = {
+      i = {
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
+      },
+      n = {
+        ['<C-d>'] = 'delete_buffer',
+      },
+    },
+  },
+}
+
+-- Enable telescope fzf native, if installed
+pcall(require('telescope').load_extension, 'fzf')
+pcall(require("telescope").load_extension, "file_browser")
+
+pcall(require("telescope").load_extension("ui-select"))
+
+-- See `:help telescope.builtin`
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').oldfiles, { desc = '[S]earch [R]ecently opened files' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>/', function()
+  -- You can pass additional configuration to telescope to change theme, layout, etc.
+  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+    winblend = 10,
+    previewer = false,
+  })
+end, { desc = '[/] Fuzzily search in current buffer]' })
+
+vim.keymap.set('n', '<leader>tr', require('telescope.builtin').resume, { desc = '[T]elescope [R]esume' })
+vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set( "n", "<leader>tb", ":Telescope file_browser<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+
