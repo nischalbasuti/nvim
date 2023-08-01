@@ -3,7 +3,7 @@
 require('telescope').setup {
   defaults = {
     path_display={"truncate"},
-    file_ignore_patterns = { "node_modules", ".git" },
+    file_ignore_patterns = { "node_modules" },
     mappings = {
       i = {
         ['<C-u>'] = false,
