@@ -252,7 +252,7 @@ vim.cmd([[
 
 vim.opt.colorcolumn = "81,121"
 
-require("chatgpt").setup({
-    api_key = "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"
-})
+-- require("chatgpt").setup({
+--     api_key = "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"
+-- })
 
