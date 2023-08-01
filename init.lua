@@ -201,6 +201,8 @@ vim.g.maplocalleader = ' '
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
+
+-- Don't do anything when you hit space in normal mode and visual mode
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
@@ -217,17 +219,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
-
--- Set lualine as statusline
--- See `:help lualine.txt`
-require('lualine').setup {
-  options = {
-    icons_enabled = false,
-    theme = 'catppuccin',
-    component_separators = '|',
-    section_separators = '',
-  },
-}
 
 -- Enable Comment.nvim
 require('Comment').setup()
