@@ -35,6 +35,8 @@ local on_attach = function(client, bufnr)
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+  nmap('<leader>gr', function () require('telescope.builtin').lsp_references{ path_display = { "truncate" } } end, '[G]oto [R]eferences' )
+
   nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')

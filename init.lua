@@ -245,9 +245,6 @@ vim.keymap.set( "n", "<leader>b", ":NvimTreeFindFileToggle<CR>", { noremap = tru
 
 vim.cmd [[set expandtab]]
 
-vim.keymap.set('n', '<leader>gr', function () require('telescope.builtin').lsp_references{ path_display = { "truncate" } } end, { desc = '[G]oto [R]eferences' })
-
-
 -- switch to last buffer
 vim.keymap.set( "n",
     "<leader><Tab>",
