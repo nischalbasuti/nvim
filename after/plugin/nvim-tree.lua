@@ -63,3 +63,5 @@ require("nvim-tree").setup({
         dotfiles = true,
     },
 })
+
+vim.keymap.set( "n", "<leader>b", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })

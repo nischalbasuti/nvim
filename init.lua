@@ -137,20 +137,20 @@ if is_bootstrap then
   return
 end
 
--- Automatically source and re-compile packer whenever you save this init.lua
-local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
-vim.api.nvim_create_autocmd('BufWritePost', {
-  command = 'source <afile> | silent! LspStop | silent! LspStart | PackerCompile',
-  group = packer_group,
-  pattern = vim.fn.expand '$MYVIMRC',
-})
+-- -- Automatically source and re-compile packer whenever you save this init.lua
+-- local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
+-- vim.api.nvim_create_autocmd('BufWritePost', {
+--   command = 'source <afile> | silent! LspStop | silent! LspStart | PackerCompile',
+--   group = packer_group,
+--   pattern = vim.fn.expand '$MYVIMRC',
+-- })
 
 -- nischal
-vim.o.expandtab = true
-vim.o.smartindent = true
+vim.opt.expandtab = true
+vim.opt.smartindent = true
 vim.opt_local.shiftwidth = 4
 vim.opt_local.tabstop = 4
-vim.o.scrolloff = 4
+vim.opt.scrolloff = 4
 vim.opt.termguicolors = true -- set termguicolors to enable highlight groups
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -163,7 +163,6 @@ vim.api.nvim_create_autocmd("FileType", {
 -- /nischal
 
 -- [[ Setting options ]]
--- See `:help vim.o`
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -235,34 +234,23 @@ noremap <Leader>p "+p
 noremap <Leader>d "+d
 ]]
 
--- vim.keymap.set( "n", "<leader>y", '"+y', { noremap = true, desc='Yank to clipboard' })
+-- support italics
 vim.cmd [[
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 ]]
 
-vim.keymap.set( "n", "<leader>b", ":NvimTreeFindFileToggle<CR>", { noremap = true, desc='[F]ile [B]rowser' })
-
-vim.cmd [[set expandtab]]
-
 -- switch to last buffer
-vim.keymap.set( "n",
-    "<leader><Tab>",
-    ":e #<CR>",
-    { noremap = true, desc='Switch to last buffer' })
-
+vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch to last buffer' })
 
 -- Automatically source .zshrc on save
 vim.cmd([[
   autocmd BufWritePost ~/.zshrc !source ~/.zshrc > /dev/null
 ]])
 
-vim.cmd([[
-  set colorcolumn=81,121
-]])
+vim.opt.colorcolumn = "81,121"
 
 require("chatgpt").setup({
     api_key = "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"
 })
-
 
