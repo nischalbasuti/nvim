@@ -2,6 +2,7 @@
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    layout_strategy = "vertical",
     path_display={"truncate"},
     file_ignore_patterns = { "node_modules" },
     mappings = {
