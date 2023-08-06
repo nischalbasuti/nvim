@@ -15,6 +15,8 @@ require('packer').startup(function(use)
 
   use 'github/copilot.vim'
 
+  use 'ThePrimeagen/harpoon'
+
   use({
   "jackMort/ChatGPT.nvim",
     config = function()
