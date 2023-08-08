@@ -1,3 +1,9 @@
+require("harpoon").setup({
+    menu = {
+        width = 80,
+    }
+})
+
 vim.keymap.set('n', '<leader>hm', require("harpoon.ui").toggle_quick_menu)
 vim.keymap.set('n', '<leader>hh', require("harpoon.ui").toggle_quick_menu)
 
