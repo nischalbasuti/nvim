@@ -32,6 +32,8 @@ require('packer').startup(function(use)
   use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
 
+  use { 'andymass/vim-matchup' }
+
   use 'sunjon/Shade.nvim'
 
   use {
