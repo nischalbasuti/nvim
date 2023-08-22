@@ -45,6 +45,11 @@ require('packer').startup(function(use)
     }
   }
 
+  use {
+    "SmiteshP/nvim-navic",
+    requires = "neovim/nvim-lspconfig"
+  }
+
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     requires = {
@@ -262,3 +267,10 @@ vim.opt.colorcolumn = "81,121"
 
 vim.g.copilot_no_tab_map = true
 vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+
+vim.cmd([[
+augroup QuickfixSettings
+    autocmd!
+    autocmd FileType qf setlocal nowrap
+augroup END
+]])
