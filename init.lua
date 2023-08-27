@@ -102,6 +102,8 @@ require('packer').startup(function(use)
   use 'lewis6991/gitsigns.nvim'
   use 'f-person/git-blame.nvim'
 
+  use 'tommcdo/vim-fubitive'
+
   use {'akinsho/git-conflict.nvim', tag = "*", config = function()
     require('git-conflict').setup()
   end}
