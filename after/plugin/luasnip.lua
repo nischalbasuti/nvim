@@ -32,6 +32,17 @@ ls.add_snippets(nil, {
   javascript = {
     ls.parser.parse_snippet("afn", "($1) => {$2}$0"),
     ls.parser.parse_snippet("fn", "function $1($2) {\n\t$0\n}"),
+
+    ls.parser.parse_snippet("dt", "/** @type {$1} */"),
+    ls.parser.parse_snippet("dtb", [[/** @type {import("@babylonjs/core")$1} */]]),
+    ls.parser.parse_snippet("dti", [[/** @type {import("$1")$2} */]]),
+
+    ls.parser.parse_snippet("d", [[/** $1 */]]),
+    ls.parser.parse_snippet("dd", "/**\n * $1\n */"),
+
+    ls.parser.parse_snippet("dp", [[@param {$1} $2]]),
+    ls.parser.parse_snippet("dpb", [[@param {import("@babylonjs/core")$1} $2]]),
+    ls.parser.parse_snippet("dpi", [[@param {import("$1")$2} $3]]),
   }
 })
 
