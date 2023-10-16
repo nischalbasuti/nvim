@@ -1,8 +1,8 @@
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
-vim.opt.list = true
-vim.opt.listchars:append "eol:↴"
-vim.opt.listchars:append "space:⋅"
+-- vim.opt.list = true
+-- vim.opt.listchars:append "eol:↴"
+-- vim.opt.listchars:append "space:⋅"
 
 vim.opt.termguicolors = true
 -- vim.cmd [[highlight IndentBlanklineIndent1 guifg=#E06C75 gui=nocombine]]
@@ -16,8 +16,8 @@ vim.opt.termguicolors = true
 require('indent_blankline').setup {
   -- char = '┊',
   show_trailing_blankline_indent = false,
-  show_end_of_line = true,
-  space_char_blankline = " ",
+  -- show_end_of_line = true,
+  -- space_char_blankline = " ",
   show_current_context = true,
   show_current_context_start = true,
   -- char_highlight_list = {
