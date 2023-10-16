@@ -175,6 +175,14 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.tabstop = 2
     end
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "typescript",
+    callback = function()
+        vim.opt_local.shiftwidth = 2
+        vim.opt_local.tabstop = 2
+    end
+})
 -- /nischal
 
 -- [[ Setting options ]]
@@ -278,3 +286,5 @@ augroup QuickfixSettings
     autocmd FileType qf setlocal nowrap
 augroup END
 ]])
+
+vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
