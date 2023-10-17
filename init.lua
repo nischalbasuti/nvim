@@ -69,6 +69,8 @@ require('packer').startup(function(use)
     },
   }
 
+  use 'nvim-telescope/telescope-dap.nvim'
+
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
     requires = {
