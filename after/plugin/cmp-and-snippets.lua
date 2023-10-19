@@ -2,6 +2,20 @@
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
+-- from https://www.reddit.com/r/neovim/comments/16qcncm/how_do_you_put_borders_on_this_lsp_preview_ive/k1xae1v/
+local function border(hl_name)
+  return {
+    { "┌", hl_name },
+    { "─", hl_name },
+    { "┐", hl_name },
+    { "│", hl_name },
+    { "┘", hl_name },
+    { "─", hl_name },
+    { "└", hl_name },
+    { "│", hl_name },
+  }
+end
+
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -44,6 +58,16 @@ cmp.setup {
   experimental = {
     native_menu = false,
     ghost_text = false,
-  }
+  },
+   window = {
+    completion = {
+      border = border("CmpMenuBorder"),
+      winhighlight = "Normal:CmpMenu,Search:None",
+    },
+    documentation = {
+      border = border("CmpDocBorder"),
+      winhighlight = "Normal:CmpDoc",
+    },
+  },
 }
 
