@@ -126,8 +126,9 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
   use { "nvim-telescope/telescope-file-browser.nvim" }
-  use 'nvim-tree/nvim-web-devicons'
-  use 'nvim-tree/nvim-tree.lua'
+
+  -- File browser
+  use 'stevearc/oil.nvim'
 
   use {'nvim-telescope/telescope-ui-select.nvim' }
 
