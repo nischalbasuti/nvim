@@ -17,6 +17,14 @@ require('packer').startup(function(use)
 
   use 'ThePrimeagen/harpoon'
 
+  use {
+    'antosha417/nvim-lsp-file-operations',
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-tree.lua",
+    }
+  }
+
   use({
   "jackMort/ChatGPT.nvim",
     config = function()
@@ -292,3 +300,5 @@ augroup END
 ]])
 
 vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
+
+require("lsp-file-operations").setup()
