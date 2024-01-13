@@ -22,7 +22,9 @@ require('gitsigns').setup {
 vim.keymap.set( "n", "<leader>gg", ":G<CR>", { noremap = true, desc='Git summary' })
 vim.keymap.set( "n", "<leader>gb", ":G blame<CR>", { noremap = true, desc='Git load diffs to quickfix list' })
 vim.keymap.set( "n", "<leader>gdt", ":G difftool<CR>", { noremap = true, desc='Git load diffs to quickfix list' })
-vim.keymap.set( "n", "<leader>gds", ":Gdiffsplit<CR>", { noremap = true, desc='Show git diff in split window' })
+vim.keymap.set( "n", "<leader>gdf", ":Gdiffsplit<CR>", { noremap = true, desc='Show git diff in split window' })
+vim.keymap.set( "n", "<leader>gaf", ":G add @%<CR>", { noremap = true, desc='Show git diff in split window' })
+
 
 -- Browse is from netrw, but it's disabled by telescope, the following is used to get around that.
 -- from https://vi.stackexchange.com/questions/38447/vim-fugitive-netrw-not-found-define-your-own-browse-to-use-gbrowse
