@@ -263,20 +263,11 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
-vim.cmd[[
-noremap <leader>y "+y
-noremap <Leader>p "+p
-noremap <Leader>d "+d
-]]
-
 -- support italics
 vim.cmd [[
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 ]]
-
--- switch to last buffer
-vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch to last buffer' })
 
 -- Automatically source .zshrc on save
 vim.cmd([[

@@ -11,3 +11,18 @@ vim.api.nvim_set_keymap("n", "<Tab><Leader>", ":vsp<CR>", {noremap = true})
 vim.api.nvim_set_keymap("n", "<Tab>-", ":sp<CR>", {noremap = true})
 -- all splits occupy equal space
 vim.api.nvim_set_keymap("n", "<Tab>=", "<C-w>=", {noremap = true})
+
+-- copy current file path to system clipboard
+vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
+
+-- system clipboard keymaps
+vim.cmd[[
+noremap <leader>y "+y
+noremap <leader>yy "+y
+noremap <Leader>p "+p
+noremap <Leader>d "+d
+]]
+
+-- switch to last buffer
+vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch to last buffer' })
+
