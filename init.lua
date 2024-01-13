@@ -299,6 +299,26 @@ augroup QuickfixSettings
 augroup END
 ]])
 
-vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
-
 require("lsp-file-operations").setup()
+
+
+
+
+
+
+-- FORMATTERS
+
+-- Create group to assign commands
+-- "clear = true" must be set to prevent loading an
+-- auto-command repeatedly every time a file is resourced
+local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clear = true })
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+    pattern = { "*.js", "*.ts", "*.d.ts", "*.jsx", "*.tsx" },
+    desc = "Auto-format javascript and typescript files after saving",
+    callback = function()
+        local fileName = vim.api.nvim_buf_get_name(0)
+        vim.cmd(":silent !prettier --write " .. fileName)
+    end,
+    group = autocmd_group,
+})
