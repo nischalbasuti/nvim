@@ -8,7 +8,7 @@ require("catppuccin").setup({
         -- dark = "frappe",
         -- dark = "macchiato",
     },
-    transparent_background = true,
+    transparent_background = false,
     show_end_of_buffer = false, -- show the '~' characters after the end of buffers
     term_colors = false,
     dim_inactive = {
@@ -91,7 +91,8 @@ require('github-theme').setup({
 })
 
 -- vim.o.termguicolors = true
-vim.cmd [[colorscheme github_dark_default]]
+-- vim.cmd [[colorscheme github_dark_default]]
+vim.cmd [[colorscheme catppuccin]]
 vim.cmd [[
 set cursorline
 " hi Cursorline guibg=#212121
