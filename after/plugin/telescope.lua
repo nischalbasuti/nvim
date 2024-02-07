@@ -39,3 +39,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set( "n", "<leader>tb", ":Telescope file_browser<CR>", { noremap = true, desc='[F]ile [B]rowser' })
 
+vim.keymap.set( "n", "<leader>gb", ":Telescope git_branches<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+vim.keymap.set( "n", "<leader>gc", ":Telescope git_commits<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+vim.keymap.set( "n", "<leader>gst", ":Telescope git_status<CR>", { noremap = true, desc='[F]ile [B]rowser' })
+
