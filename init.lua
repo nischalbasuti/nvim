@@ -17,6 +17,8 @@ require('packer').startup(function(use)
 
   use 'ThePrimeagen/harpoon'
 
+  use ({ 'projekt0n/github-nvim-theme' })
+
   use {
     'antosha417/nvim-lsp-file-operations',
     requires = {

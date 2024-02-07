@@ -65,13 +65,33 @@ require('kanagawa').setup({
     end,
     theme = "dragon",              -- Load "wave" theme when 'background' option is not set
     background = {               -- map the value of 'background' option to a theme
-        dark = "dragon",           -- try "dragon" !
+        dark = "wave",           -- try "dragon" !
         light = "lotus"
     },
 })
 
+require('github-theme').setup({
+    terminal_colors = true,    -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+    dim_inactive = true,      -- Non focused panes set to alternative background
+    module_default = true,     -- Default enable value for modules
+    options = {
+        styles = {
+            comments = 'italic',
+            functions = 'NONE',
+            keywords = 'italic,bold',
+            variables = 'NONE',
+            conditionals = 'NONE',
+            constants = 'bold',
+            numbers = 'NONE',
+            operators = 'NONE',
+            strings = 'NONE',
+            types = 'italic',
+        }
+    }
+})
+
 -- vim.o.termguicolors = true
-vim.cmd [[colorscheme kanagawa]]
+vim.cmd [[colorscheme github_dark_default]]
 vim.cmd [[
 set cursorline
 " hi Cursorline guibg=#212121
