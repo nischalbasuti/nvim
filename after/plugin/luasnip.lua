@@ -43,6 +43,9 @@ ls.add_snippets(nil, {
     ls.parser.parse_snippet("dp", [[@param {$1} $2]]),
     ls.parser.parse_snippet("dpb", [[@param {import("@babylonjs/core")$1} $2]]),
     ls.parser.parse_snippet("dpi", [[@param {import("$1")$2} $3]]),
+
+    ls.parser.parse_snippet("dr", [[@returns {$1}]]),
+    ls.parser.parse_snippet("drb", [[@returns {import("@babylonjs/core")$1}]]),
   }
 })
 
