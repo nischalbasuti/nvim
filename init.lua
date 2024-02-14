@@ -17,7 +17,13 @@ require('packer').startup(function(use)
 
   use 'ThePrimeagen/harpoon'
 
+  use 'rose-pine/neovim'
+
   use ({ 'projekt0n/github-nvim-theme' })
+
+  use 'tjdevries/colorbuddy.nvim'
+
+  use 'backdround/global-note.nvim'
 
   use {
     'antosha417/nvim-lsp-file-operations',
@@ -296,7 +302,8 @@ require("lsp-file-operations").setup()
 
 
 
-
+-- local global_note = require("global-note")
+-- global_note.setup()
 
 
 -- FORMATTERS
@@ -315,3 +322,4 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     end,
     group = autocmd_group,
 })
+

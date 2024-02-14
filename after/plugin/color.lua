@@ -12,9 +12,9 @@ require("catppuccin").setup({
     show_end_of_buffer = false, -- show the '~' characters after the end of buffers
     term_colors = false,
     dim_inactive = {
-        enabled = false,
+        enabled = true,
         shade = "dark",
-        percentage = 0.15,
+        percentage = 0.25,
     },
     no_italic = false, -- Force no italic
     no_bold = false, -- Force no bold
@@ -90,14 +90,98 @@ require('github-theme').setup({
     }
 })
 
--- vim.o.termguicolors = true
--- vim.cmd [[colorscheme github_dark_default]]
+local Color, colors, Group, groups, styles = require('colorbuddy').setup()
+
+-- Use Color.new(<name>, <#rrggbb>) to create new colors
+-- They can be accessed through colors.<name>
+Color.new('background',  '#282c34')
+Color.new('red',         '#cc6666')
+Color.new('green',       '#99cc99')
+Color.new('yellow',      '#f0c674')
+
+-- Define highlights in terms of `colors` and `groups`
+Group.new('Function'        , colors.yellow      , colors.background , styles.bold)
+Group.new('luaFunctionCall' , groups.Function    , groups.Function   , groups.Function)
+
+-- Define highlights in relative terms of other colors
+Group.new('Error'           , colors.red:light() , nil               , styles.bold)
+
 vim.cmd [[colorscheme catppuccin]]
 vim.cmd [[
 set cursorline
-" hi Cursorline guibg=#212121
 ]]
--- vim.o.cursorline = true
---
--- vim.cmd [[highlight Normal guibg=none ctermbg=none]]
+
+require("rose-pine").setup({
+    variant = "auto", -- auto, main, moon, or dawn
+    dark_variant = "moon", -- main, moon, or dawn
+    dim_inactive_windows = true,
+    extend_background_behind_borders = true,
+
+    enable = {
+        terminal = true,
+        legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+        migrations = true, -- Handle deprecated options automatically
+    },
+
+    styles = {
+        bold = true,
+        italic = false,
+        transparency = false,
+    },
+
+    groups = {
+        border = "muted",
+        link = "iris",
+        panel = "surface",
+
+        error = "love",
+        hint = "iris",
+        info = "foam",
+        note = "pine",
+        todo = "rose",
+        warn = "gold",
+
+        git_add = "foam",
+        git_change = "rose",
+        git_delete = "love",
+        git_dirty = "rose",
+        git_ignore = "muted",
+        git_merge = "iris",
+        git_rename = "pine",
+        git_stage = "iris",
+        git_text = "rose",
+        git_untracked = "subtle",
+
+        h1 = "iris",
+        h2 = "foam",
+        h3 = "rose",
+        h4 = "gold",
+        h5 = "pine",
+        h6 = "foam",
+    },
+
+    highlight_groups = {
+        Comment = { italic = true },
+        conditional = { italic = true },
+        Function = { bold = true },
+        -- VertSplit = { fg = "muted", bg = "muted" },
+    },
+
+    before_highlight = function(group, highlight, palette)
+        -- Disable all undercurls
+        -- if highlight.undercurl then
+        --     highlight.undercurl = false
+        -- end
+        --
+        -- Change palette colour
+        -- if highlight.fg == palette.pine then
+        --     highlight.fg = palette.foam
+        -- end
+    end,
+})
+
+vim.cmd("colorscheme rose-pine")
+-- vim.cmd("colorscheme rose-pine-main")
+-- vim.cmd("colorscheme rose-pine-moon")
+-- vim.cmd("colorscheme rose-pine-dawn")
 
