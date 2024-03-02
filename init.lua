@@ -203,6 +203,13 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.tabstop = 2
     end
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "go",
+    callback = function()
+    vim.opt.expandtab = false
+    end
+})
 -- /nischal
 
 -- [[ Setting options ]]
