@@ -11,6 +11,9 @@ require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
 
+
+  use 'sbdchd/neoformat'
+
   use 'ddrscott/vim-side-search'
 
   use 'github/copilot.vim'
@@ -320,13 +323,19 @@ require("lsp-file-operations").setup()
 -- auto-command repeatedly every time a file is resourced
 local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clear = true })
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    pattern = { "*.js", "*.ts", "*.d.ts", "*.jsx", "*.tsx" },
-    desc = "Auto-format javascript and typescript files after saving",
-    callback = function()
-        local fileName = vim.api.nvim_buf_get_name(0)
-        vim.cmd(":silent !prettier --write " .. fileName)
-    end,
-    group = autocmd_group,
-})
+-- formatter stuff
+vim.cmd[[
+   let g:neoformat_try_node_exe = 1
+]]
+-- vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+--     pattern = { "*.js", "*.ts", "*.d.ts", "*.jsx", "*.tsx" },
+--     desc = "Auto-format javascript and typescript files after saving",
+--     callback = function()
+--         local fileName = vim.api.nvim_buf_get_name(0)
+--         -- vim.cmd(":silent !npx prettier --write " .. fileName)
+--         -- vim.cmd(":e")
+--         vim.cmd(":Neoformat prettier")
+--     end,
+--     group = autocmd_group,
+-- })
 

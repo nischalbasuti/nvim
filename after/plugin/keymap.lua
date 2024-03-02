@@ -26,3 +26,5 @@ noremap <Leader>d "+d
 -- switch to last buffer
 vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch to last buffer' })
 
+-- run formatter
+vim.keymap.set( "n", "<leader>nf", ":Neoformat<CR>", { noremap = true, desc='run Neoformat' })
