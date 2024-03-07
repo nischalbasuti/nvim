@@ -40,6 +40,7 @@ local on_attach = function(client, bufnr)
   nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+  nmap('<leader>k', vim.lsp.buf.signature_help, 'Hover Documentation')
 
   nmap('<leader>i', vim.lsp.buf.hover, '[I]nspect')
 
@@ -109,16 +110,21 @@ mason_lspconfig.setup_handlers {
 -- Turn on lsp status information
 require('fidget').setup()
 
-local _border = "single"
+-- vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#ffffff]]
+vim.cmd [[highlight FloatBorder guifg=white guibg=#000000]]
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-  vim.lsp.handlers.hover, {
-    border = _border
-  }
-)
+local border = "single"
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  vim.lsp.handlers.signature_help, {
-    border = _border
-  }
-)
+ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+   vim.lsp.handlers.hover, {
+     border = border,
+    title = "hover"
+   }
+ )
+
+ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+   vim.lsp.handlers.signature_help, {
+     border = border,
+    title = "signature"
+   }
+ )
