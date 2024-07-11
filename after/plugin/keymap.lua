@@ -23,6 +23,9 @@ noremap <Leader>p "+p
 noremap <Leader>d "+d
 ]]
 
+-- paste the last yank (so regualr p will paste the last delete or yank)
+vim.cmd [[ noremap <Leader>0 "0p ]]
+
 -- switch to last buffer
 vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch to last buffer' })
 
