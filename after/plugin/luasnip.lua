@@ -28,7 +28,7 @@ end)
 
 vim.keymap.set("n", "<leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>")
 
-local js_snippets = {
+local js_and_ts_snippits = {
     ls.parser.parse_snippet("afn", "($1) => {$2}$0"),
     ls.parser.parse_snippet("fn", "function $1($2) {\n\t$0\n}"),
 
@@ -45,8 +45,13 @@ local js_snippets = {
 
     ls.parser.parse_snippet("dr", [[@returns {$1}]]),
     ls.parser.parse_snippet("drb", [[@returns {import("@babylonjs/core")$1}]]),
-  }
-ls.add_snippets(nil, { javascript = js_snippets, typescript = js_snippets,})
+
+    ls.parser.parse_snippet("tsi", [[// @ts-ignore]]),
+}
+ls.add_snippets(nil, {
+  javascript = js_and_ts_snippits,
+  typescript = js_and_ts_snippits,
+})
 
 
 -- local s = ls.s
