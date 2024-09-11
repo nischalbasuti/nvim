@@ -79,4 +79,4 @@ vim.keymap.set( "n", "<leader>gst", ":Telescope git_status<CR>", { noremap = tru
 
 vim.keymap.set( "n", "<leader>u", ":Telescope undo<CR>", { noremap = true, desc='[U]ndo tree' })
 
-vim.keymap.set( "v", "<leader>sv", '"zy:Telescope grep_string default_text=<C-r>z<cr>', { noremap = true, desc='[S]earch under [Visual] selection' })
+vim.keymap.set( "v", "<leader>sw", '"zy:Telescope grep_string default_text=<C-r>z<cr>', { noremap = true, desc='[S]earch [W]ords under visual selection' })
