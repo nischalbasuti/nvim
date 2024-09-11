@@ -15,12 +15,13 @@ require('telescope').setup {
       },
     },
   },
+
   extensions = {
     undo = {
       use_delta = true,
       use_custom_command = nil, -- setting this implies `use_delta = false`. Accepted format is: { "bash", "-c", "echo '$DIFF' | delta" }
       side_by_side = true,
-      diff_context_lines = vim.o.scrolloff,
+      vim_diff_opts = { ctxlen = 4 },
       entry_format = "state #$ID, $STAT, $TIME",
       time_format = "",
       saved_only = false,
@@ -78,3 +79,4 @@ vim.keymap.set( "n", "<leader>gst", ":Telescope git_status<CR>", { noremap = tru
 
 vim.keymap.set( "n", "<leader>u", ":Telescope undo<CR>", { noremap = true, desc='[U]ndo tree' })
 
+vim.keymap.set( "v", "<leader>sv", '"zy:Telescope grep_string default_text=<C-r>z<cr>', { noremap = true, desc='[S]earch under [Visual] selection' })
