@@ -8,6 +8,8 @@ vim.api.nvim_set_keymap("n", "<Leader>k", "<C-w><C-k>", {noremap = true})
 -- copy current file path to system clipboard
 vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
 
+vim.cmd([[map <leader>ai :!cursor %<CR>]])
+
 -- system clipboard keymaps
 vim.cmd[[
 noremap <leader>y "+y
@@ -24,3 +26,7 @@ vim.keymap.set( "n", "<leader><Tab>", ":e #<CR>", { noremap = true, desc='Switch
 
 -- run formatter
 vim.keymap.set( "n", "<leader>nf", ":Neoformat<CR>", { noremap = true, desc='run Neoformat' })
+
+-- quickfix cnext and cprev keymap
+vim.keymap.set( "n", "<leader>cn", ":cnext<CR>", { noremap = true, desc='cnext' })
+vim.keymap.set( "n", "<leader>cp", ":cprevious<CR>", { noremap = true, desc='cprevious' })
