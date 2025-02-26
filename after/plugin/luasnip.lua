@@ -32,6 +32,8 @@ local js_and_ts_snippits = {
     ls.parser.parse_snippet("afn", "($1) => {$2}$0"),
     ls.parser.parse_snippet("fn", "function $1($2) {\n\t$0\n}"),
 
+    ls.parser.parse_snippet("koto", "(typeof $1)[keyof typeof $1]"),
+
     ls.parser.parse_snippet("dt", "/** @type {$1} */"),
     ls.parser.parse_snippet("dtb", [[/** @type {import("@babylonjs/core")$1} */]]),
     ls.parser.parse_snippet("dti", [[/** @type {import("$1")$2} */]]),
