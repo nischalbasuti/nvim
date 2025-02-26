@@ -40,7 +40,7 @@ local on_attach = function(client, bufnr)
   nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<leader>k', vim.lsp.buf.signature_help, 'Hover Documentation')
+  nmap('<leader>K', vim.lsp.buf.signature_help, 'Hover Documentation')
 
   nmap('<leader>i', vim.lsp.buf.hover, '[I]nspect')
 
