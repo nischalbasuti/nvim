@@ -18,6 +18,8 @@ require('packer').startup(function(use)
 
   use 'github/copilot.vim'
 
+  use 'CopilotC-Nvim/CopilotChat.nvim'
+
   use 'ThePrimeagen/harpoon'
 
   use 'rose-pine/neovim'
@@ -329,3 +331,11 @@ local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clea
 vim.cmd[[
    let g:neoformat_try_node_exe = 1
 ]]
+
+
+require("CopilotChat").setup {
+  -- See Configuration section for options
+}
+
+vim.o.completeopt = "menu,menuone,noinsert,noselect,popup"
+
