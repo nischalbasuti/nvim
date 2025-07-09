@@ -192,36 +192,17 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 })
 
 -- nischal
+-- [[ Personal Preferences ]]
+
+-- Enable smart indentation and tabs
 vim.opt.expandtab = true
 vim.opt.smartindent = true
 vim.opt_local.shiftwidth = 4
 vim.opt_local.tabstop = 4
 vim.opt.scrolloff = 4
-vim.opt.termguicolors = true -- set termguicolors to enable highlight groups
+vim.opt.termguicolors = true -- Enables highlight groups
 
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "javascript",
-    callback = function()
-        vim.opt_local.shiftwidth = 2
-        vim.opt_local.tabstop = 2
-    end
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "typescript",
-    callback = function()
-        vim.opt_local.shiftwidth = 2
-        vim.opt_local.tabstop = 2
-    end
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "go",
-    callback = function()
-    vim.opt.expandtab = false
-    end
-})
--- /nischal
+-- Set language-specific tab preferences
 
 -- [[ Setting options ]]
 
@@ -283,11 +264,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Enable Comment.nvim
 require('Comment').setup()
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- support italics
 vim.cmd [[
@@ -302,10 +278,6 @@ vim.cmd([[
 
 vim.opt.colorcolumn = "81,121"
 
--- require("chatgpt").setup({
---     api_key = "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"
--- })
-
 -- Copilot configuration is now handled by copilot.lua in after/plugin/copilot.lua
 
 vim.cmd([[
@@ -317,13 +289,9 @@ augroup END
 
 require("lsp-file-operations").setup()
 
-
-
 -- local global_note = require("global-note")
 -- global_note.setup()
 
-
--- FORMATTERS
 
 -- Create group to assign commands
 -- "clear = true" must be set to prevent loading an
