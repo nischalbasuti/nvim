@@ -16,9 +16,13 @@ require('packer').startup(function(use)
 
   use 'ddrscott/vim-side-search'
 
-  use 'github/copilot.vim'
+  -- use 'github/copilot.vim'
+
+  use 'zbirenbaum/copilot.lua'
 
   use 'CopilotC-Nvim/CopilotChat.nvim'
+
+  use 'yetone/avante.nvim'
 
   use 'ThePrimeagen/harpoon'
 
@@ -302,8 +306,7 @@ vim.opt.colorcolumn = "81,121"
 --     api_key = "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"
 -- })
 
-vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+-- Copilot configuration is now handled by copilot.lua in after/plugin/copilot.lua
 
 vim.cmd([[
 augroup QuickfixSettings
@@ -331,11 +334,4 @@ local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clea
 vim.cmd[[
    let g:neoformat_try_node_exe = 1
 ]]
-
-
-require("CopilotChat").setup {
-  -- See Configuration section for options
-}
-
-vim.o.completeopt = "menu,menuone,noinsert,noselect,popup"
 

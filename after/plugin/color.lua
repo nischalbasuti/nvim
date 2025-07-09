@@ -1,5 +1,6 @@
 -- Set colorscheme
 
+local transparent = true
 require("catppuccin").setup({
     flavour = "mocha", -- latte, frappe, macchiato, mocha
     background = { -- :h background
@@ -8,7 +9,7 @@ require("catppuccin").setup({
         -- dark = "frappe",
         -- dark = "macchiato",
     },
-    transparent_background = false,
+    transparent_background = transparent,
     show_end_of_buffer = false, -- show the '~' characters after the end of buffers
     term_colors = false,
     dim_inactive = {
@@ -53,7 +54,7 @@ require('kanagawa').setup({
     keywordStyle = { italic = true},
     statementStyle = { bold = true },
     typeStyle = {},
-    transparent = false,         -- do not set background color
+    transparent = transparent,         -- do not set background color
     dimInactive = false,         -- dim inactive window `:h hl-NormalNC`
     terminalColors = true,       -- define vim.g.terminal_color_{0,17}
     colors = {                   -- add/modify theme and palette colors
@@ -110,7 +111,7 @@ require("rose-pine").setup({
     styles = {
         bold = true,
         italic = false,
-        transparency = false,
+        transparency = transparent,
     },
 
     groups = {
@@ -164,8 +165,6 @@ require("rose-pine").setup({
     end,
 })
 
-vim.cmd("colorscheme rose-pine")
--- vim.cmd("colorscheme rose-pine-main")
--- vim.cmd("colorscheme rose-pine-moon")
--- vim.cmd("colorscheme rose-pine-dawn")
-
+-- vim.cmd("colorscheme rose-pine")
+-- vim.cmd("colorscheme kanagawa")
+vim.cmd("colorscheme catppuccin")
