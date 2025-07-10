@@ -62,7 +62,7 @@ require('packer').startup(function(use)
   use 'sunjon/Shade.nvim'
 
   use {
-    "SmiteshP/nvim-navbuddy",
+    "hasansujon786/nvim-navbuddy",
     requires = {
       "neovim/nvim-lspconfig",
       "SmiteshP/nvim-navic",

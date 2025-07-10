@@ -165,26 +165,26 @@ end
 -- Initialize key mappings
 setup_keymaps()
 
--- Print setup confirmation
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function()
-    vim.schedule(function()
-      print('Avante configured with Copilot as provider')
-      print('Use <leader>aa to ask Avante')
-      print('Use <leader>ac to start chat')
-      print('Use <leader>at to toggle sidebar')
-      print('Use <leader>af to focus sidebar')
-      print('Use <leader>as to stop current request')
-      print('Use <leader>ap to switch provider')
-      print('Use <leader>am to show models')
-      print('Use <leader>ar to show repo map')
-      print('')
-      print('Default Avante keymaps:')
-      print('  <leader>aa - Show sidebar')
-      print('  <leader>at - Toggle sidebar visibility')
-      print('  <leader>ar - Refresh sidebar')
-      print('  <leader>af - Switch sidebar focus')
-    end)
-  end,
-  once = true,
-}) 
+-- -- Print setup confirmation
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--   callback = function()
+--     vim.schedule(function()
+--       print('Avante configured with Copilot as provider')
+--       print('Use <leader>aa to ask Avante')
+--       print('Use <leader>ac to start chat')
+--       print('Use <leader>at to toggle sidebar')
+--       print('Use <leader>af to focus sidebar')
+--       print('Use <leader>as to stop current request')
+--       print('Use <leader>ap to switch provider')
+--       print('Use <leader>am to show models')
+--       print('Use <leader>ar to show repo map')
+--       print('')
+--       print('Default Avante keymaps:')
+--       print('  <leader>aa - Show sidebar')
+--       print('  <leader>at - Toggle sidebar visibility')
+--       print('  <leader>ar - Refresh sidebar')
+--       print('  <leader>af - Switch sidebar focus')
+--     end)
+--   end,
+--   once = true,
+-- }) 
