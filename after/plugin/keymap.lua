@@ -8,7 +8,7 @@ vim.api.nvim_set_keymap("n", "<Leader>k", "<C-w><C-k>", {noremap = true})
 -- copy current file path to system clipboard
 vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
 
-vim.cmd([[map <leader>ai :!cursor %<CR>]])
+vim.cmd([[map <leader>ai :!cursor . && cursor %<CR><CR>]])
 
 -- system clipboard keymaps
 vim.cmd[[
