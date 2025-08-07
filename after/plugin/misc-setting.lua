@@ -40,11 +40,6 @@ vim.wo.signcolumn = 'yes'
 vim.o.completeopt = 'menuone,noselect'
 
 -- [[ Basic Keymaps ]]
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 -- Don't do anything when you hit space in normal mode and visual mode
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
