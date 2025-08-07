@@ -67,6 +67,9 @@ end
 -- Turn on lsp status information
 require('fidget').setup()
 
+-- turn on lsp file operations
+require("lsp-file-operations").setup()
+
 -- vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#ffffff]]
 vim.cmd [[highlight FloatBorder guifg=white guibg=#000000]]
 

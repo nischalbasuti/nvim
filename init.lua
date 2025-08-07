@@ -11,7 +11,6 @@ require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
 
-
   use 'sbdchd/neoformat'
 
   use 'ddrscott/vim-side-search'
@@ -31,8 +30,6 @@ require('packer').startup(function(use)
   use ({ 'projekt0n/github-nvim-theme' })
 
   use 'tjdevries/colorbuddy.nvim'
-
-  use 'backdround/global-note.nvim'
 
   use {
     'antosha417/nvim-lsp-file-operations',
@@ -192,115 +189,3 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   group = packer_group,
   pattern = vim.fn.expand '$MYVIMRC',
 })
-
--- nischal
--- [[ Personal Preferences ]]
-
--- Enable smart indentation and tabs
-vim.opt.expandtab = true
-vim.opt.smartindent = true
-vim.opt_local.shiftwidth = 4
-vim.opt_local.tabstop = 4
-vim.opt.scrolloff = 4
-vim.opt.termguicolors = true -- Enables highlight groups
-
--- Set language-specific tab preferences
-
--- [[ Setting options ]]
-
--- Set highlight on search
-vim.o.hlsearch = false
-
--- Make line numbers default
-vim.wo.number = true
-vim.wo.relativenumber = true
-
--- Enable mouse mode
-vim.o.mouse = 'a'
-
--- Enable break indent
-vim.o.breakindent = true
-
--- Save undo history
-vim.o.undofile = true
-
--- Case insensitive searching UNLESS /C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- Decrease update time
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-
--- [[ Basic Keymaps ]]
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
-
--- Don't do anything when you hit space in normal mode and visual mode
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
--- -- Remap for dealing with word wrap
--- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
--- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
-
--- Enable Comment.nvim
-require('Comment').setup()
-
-
--- support italics
-vim.cmd [[
-let &t_ZH="\e[3m"
-let &t_ZR="\e[23m"
-]]
-
--- Automatically source .zshrc on save
-vim.cmd([[
-  autocmd BufWritePost ~/.zshrc !source ~/.zshrc > /dev/null
-]])
-
-vim.opt.colorcolumn = "81,121"
-
--- Copilot configuration is now handled by copilot.lua in after/plugin/copilot.lua
-
-vim.cmd([[
-augroup QuickfixSettings
-    autocmd!
-    autocmd FileType qf setlocal nowrap
-augroup END
-]])
-
-require("lsp-file-operations").setup()
-
--- local global_note = require("global-note")
--- global_note.setup()
-
-
--- Create group to assign commands
--- "clear = true" must be set to prevent loading an
--- auto-command repeatedly every time a file is resourced
-local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clear = true })
-
--- formatter stuff
-vim.cmd[[
-   let g:neoformat_try_node_exe = 1
-]]
