@@ -89,10 +89,12 @@ require('packer').startup(function(use)
       -- Useful status updates for LSP
       {'j-hui/fidget.nvim', tag = "legacy"},
 
-      -- Additional lua configuration, makes nvim stuff amazing
-      'folke/neodev.nvim',
     },
   }
+
+    use {
+        "folke/lazydev.nvim"
+    }
 
   use 'nvim-telescope/telescope-dap.nvim'
   
@@ -302,4 +304,3 @@ local autocmd_group = vim.api.nvim_create_augroup("Custom auto-commands", { clea
 vim.cmd[[
    let g:neoformat_try_node_exe = 1
 ]]
-
