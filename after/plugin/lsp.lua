@@ -53,16 +53,20 @@ mason_lspconfig.setup {
 }
 
 -- Configure LSP servers
-local lspconfig = require('lspconfig')
-
 -- Setup servers that are configured in the servers table
 for server_name, server_config in pairs(servers) do
-  lspconfig[server_name].setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = server_config,
-  }
+  local server = vim.lsp.config[server_name]
+  if server and server.setup then
+    server.setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = server_config,
+    }
+  else
+    vim.notify("No setup function for " .. server_name, vim.log.levels.WARN)
+  end
 end
+
 
 -- Turn on lsp status information
 require('fidget').setup()
