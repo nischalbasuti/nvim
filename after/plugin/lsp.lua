@@ -108,7 +108,6 @@ nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 nmap('<leader>gr', function () require('telescope.builtin').lsp_references{ path_display = { "truncate" } } end, '[G]oto [R]eferences' )
 nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
 
-nmap('K', function () vim.lsp.buf.hover({ border = 'single' }) end, 'Hover Documentation')
 nmap('<leader>K', function() vim.lsp.buf.signature_help({ border = 'single' }) end, 'Hover Documentation')
 
 -- Lesser used LSP functionality
@@ -122,3 +121,39 @@ nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '
 nmap('<leader>wl', function()
   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 end, '[W]orkspace [L]ist Folders')
+
+
+
+
+-- nmap('K', function () vim.lsp.buf.hover({ border = 'single' }) end, 'Hover Documentation')
+-- this is giving blank shiz after a bit, so vibe coded this as a temp fix https://chatgpt.com/c/68d51530-b050-8321-bbc7-8d72508be5a5
+vim.keymap.set('n','K',function()
+  local params = vim.lsp.util.make_position_params()
+  vim.lsp.buf_request(0,'textDocument/hover',params,function(err,res)
+    if err or not res or not res.contents then
+      vim.notify("No hover",vim.log.levels.INFO)
+      return
+    end
+    local ct = res.contents
+    local lines = {}
+    if type(ct)=='table' and ct.value then
+      lines={'```typescript'}
+      for l in ct.value:gmatch('[^\r\n]+') do
+        if l~='```typescript' then
+          table.insert(lines,l)
+        end
+      end
+      table.insert(lines,'```')
+    end
+    if #lines>0 then
+      vim.lsp.util.open_floating_preview(lines,'markdown',{
+        border='single',
+        max_width=80,
+        focusable=true,
+        zindex=50
+      })
+    else
+      vim.notify('Empty hover',vim.log.levels.INFO)
+    end
+  end)
+end,{desc='Hover Documentation (typescript fallback)'})
