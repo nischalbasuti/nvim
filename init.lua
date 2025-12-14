@@ -39,18 +39,6 @@ require('packer').startup(function(use)
     }
   }
 
-  use({
-  "jackMort/ChatGPT.nvim",
-    config = function()
-      require("chatgpt").setup()
-    end,
-    requires = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim"
-    }
-})
-
   use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
 
