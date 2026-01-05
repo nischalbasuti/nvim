@@ -15,13 +15,9 @@ require('packer').startup(function(use)
 
   use 'ddrscott/vim-side-search'
 
-  -- use 'github/copilot.vim'
-
-  use 'zbirenbaum/copilot.lua'
-
-  use 'CopilotC-Nvim/CopilotChat.nvim'
-
-  use 'yetone/avante.nvim'
+  use {
+    "supermaven-inc/supermaven-nvim"
+  }
 
   use 'ThePrimeagen/harpoon'
 
@@ -183,3 +179,17 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+require("supermaven-nvim").setup({
+  keymaps = {
+    accept_suggestion = "<C-l>",
+    -- clear_suggestion = "<C-]>",
+    -- accept_word = "<C-j>",
+  },
+  log_level = "info", -- set to "off" to disable logging completely
+  disable_inline_completion = false, -- disables inline completion for use with cmp
+  disable_keymaps = false, -- disables built in keymaps for more manual control
+  condition = function()
+    return false
+  end -- condition to check for stopping supermaven, `true` means to stop supermaven when the condition is true.
+})
