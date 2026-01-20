@@ -8,7 +8,12 @@ vim.api.nvim_set_keymap("n", "<Leader>k", "<C-w><C-k>", {noremap = true})
 -- copy current file path to system clipboard
 vim.cmd([[map <leader>yf :let @+=expand("%")<CR>]])
 
-vim.cmd([[map <leader>ai :!cursor . && cursor %<CR><CR>]])
+vim.keymap.set('n', '<leader>ai', function()
+  local file = vim.fn.expand('%:p')
+  local line = vim.fn.line('.')
+  local col = vim.fn.col('.')
+  vim.cmd('!cursor . && cursor --goto ' .. file .. ':' .. line .. ':' .. col)
+end, { desc = 'Open Cursor at current position' })
 
 -- system clipboard keymaps
 vim.cmd[[
