@@ -102,6 +102,17 @@ local function notify(msg, level)
   vim.notify(msg, level, { title = "Git Worktree" })
 end
 
+-- Helper: Set directory for parent shell to cd to
+local function set_shell_cd(path)
+  -- Write to file - shell's precmd hook will pick it up
+  local cd_file = os.getenv("HOME") .. "/.nvim_worktree_cd"
+  local f = io.open(cd_file, "w")
+  if f then
+    f:write(path)
+    f:close()
+  end
+end
+
 -- List all worktrees
 function M.list_worktrees()
   if not is_git_repo() then
@@ -359,6 +370,7 @@ function M.switch_to_worktree()
     if idx then
       local path = worktrees[idx].path
       vim.cmd("cd " .. vim.fn.fnameescape(path))
+      set_shell_cd(path)
       notify("Switched to: " .. path)
     end
   end)

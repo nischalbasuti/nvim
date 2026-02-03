@@ -13,19 +13,12 @@ require('packer').startup(function(use)
 
   use 'sbdchd/neoformat'
 
-  use 'ddrscott/vim-side-search'
-
   use {
     "supermaven-inc/supermaven-nvim"
   }
+  use 'coder/claudecode.nvim'
 
   use 'ThePrimeagen/harpoon'
-
-  use 'rose-pine/neovim'
-
-  use ({ 'projekt0n/github-nvim-theme' })
-
-  use 'tjdevries/colorbuddy.nvim'
 
   use {
     'antosha417/nvim-lsp-file-operations',
@@ -39,8 +32,6 @@ require('packer').startup(function(use)
   use 'tpope/vim-surround'
 
   use { 'andymass/vim-matchup' }
-
-  use 'sunjon/Shade.nvim'
 
   use {
     "hasansujon786/nvim-navbuddy",
@@ -112,17 +103,12 @@ require('packer').startup(function(use)
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
-  use 'f-person/git-blame.nvim'
-
-  use 'tommcdo/vim-fubitive'
 
   use {'akinsho/git-conflict.nvim', tag = "*", config = function()
     require('git-conflict').setup()
   end}
 
-  use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use { "catppuccin/nvim", as = "catppuccin" }
-  use "rebelot/kanagawa.nvim"
 
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
