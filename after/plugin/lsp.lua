@@ -1,43 +1,62 @@
 -- LSP settings.
---
 local navic = require("nvim-navic")
 local navbuddy = require("nvim-navbuddy")
 
---  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(client, bufnr)
-  -- print("lsconfig on_attach", client, bufnr)
+-- Default border for all LSP floating windows
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'single' })
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'single' })
 
+-- Default border for diagnostics
+vim.diagnostic.config({
+  float = { border = 'single' },
+})
+
+-- Enable the following language servers
+local servers = {
+  clangd = {},
+}
+
+-- nvim-cmp supports additional completion capabilities
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- This function gets run when an LSP connects to a particular buffer.
+local on_attach = function(client, bufnr)
   if client.server_capabilities.documentSymbolProvider then
     navic.attach(client, bufnr)
     navbuddy.attach(client, bufnr)
   end
 
+  -- Buffer-local keymaps
+  local nmap = function(keys, func, desc)
+    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = 'LSP: ' .. (desc or '') })
+  end
+
+  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+
+  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+  nmap('<leader>gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation (Telescope)')
+  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+
+  nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
+  nmap('<leader>gr', function()
+    require('telescope.builtin').lsp_references{ path_display = { "truncate" } }
+  end, '[G]oto [R]eferences (Telescope)')
+
+  nmap('<leader>K', vim.lsp.buf.signature_help, 'Signature Help')
+
+  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+  nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+  nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+  nmap('<leader>wl', function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, '[W]orkspace [L]ist Folders')
+
+  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 end
-
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
-local servers = {
-  clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- jedi_language_server = {},
-  -- ts_ls = {},
-
-  -- sumneko_lua = {
-  --   Lua = {
-  --     workspace = { checkThirdParty = false },
-  --     telemetry = { enable = false },
-  --   },
-  -- },
-}
-
--- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Setup mason so it can manage external tooling
 require('mason').setup({
@@ -45,115 +64,64 @@ require('mason').setup({
 })
 
 -- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
-
-mason_lspconfig.setup {
+local mason_lspconfig = require('mason-lspconfig')
+mason_lspconfig.setup({
   ensure_installed = vim.tbl_keys(servers),
   automatic_installation = true,
-}
+})
 
--- Configure LSP servers
--- Setup servers that are configured in the servers table
+-- Configure LSP servers (Neovim 0.11+ native API)
 for server_name, server_config in pairs(servers) do
-  local server = vim.lsp.config[server_name]
-  if server and server.setup then
-    server.setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = server_config,
-    }
-  else
-    vim.notify("No setup function for " .. server_name, vim.log.levels.WARN)
-  end
+  vim.lsp.config[server_name] = {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = server_config,
+  }
+  vim.lsp.enable(server_name)
 end
-
 
 -- Turn on lsp status information
 require('fidget').setup()
 
--- turn on lsp file operations
+-- Turn on lsp file operations
 require("lsp-file-operations").setup()
 
--- vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#ffffff]]
 vim.cmd [[highlight FloatBorder guifg=white guibg=#000000]]
 
--- vim.o.winborder = "rounded" -- sets for all floating windows tho...
+-- Diagnostic keymaps (global)
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, { desc = 'Go to previous diagnostic' })
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, { desc = 'Go to next diagnostic' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open diagnostic float' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Set diagnostic loclist' })
 
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
-
--- Keymaps for LSP functionality
-local nmap = function(keys, func, desc)
-  if desc then
-    desc = 'LSP: ' .. desc
-  end
-
-  vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-end
-
-nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-nmap('<leader>ca', function() vim.lsp.buf.code_action() end, '[C]ode [A]ction')
-
-nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-
-nmap('<leader>gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-
-nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-
-nmap('<leader>gr', function () require('telescope.builtin').lsp_references{ path_display = { "truncate" } } end, '[G]oto [R]eferences' )
-nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
-
-nmap('<leader>K', function() vim.lsp.buf.signature_help({ border = 'single' }) end, 'Hover Documentation')
-
--- Lesser used LSP functionality
-nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-
-nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-nmap('<leader>wl', function()
-  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-end, '[W]orkspace [L]ist Folders')
-
-
-
-
--- nmap('K', function () vim.lsp.buf.hover({ border = 'single' }) end, 'Hover Documentation')
--- this is giving blank shiz after a bit, so vibe coded this as a temp fix https://chatgpt.com/c/68d51530-b050-8321-bbc7-8d72508be5a5
-vim.keymap.set('n','K',function()
+-- Custom hover (workaround for blank hover issue with some servers)
+vim.keymap.set('n', 'K', function()
   local params = vim.lsp.util.make_position_params()
-  vim.lsp.buf_request(0,'textDocument/hover',params,function(err,res)
+  vim.lsp.buf_request(0, 'textDocument/hover', params, function(err, res)
     if err or not res or not res.contents then
-      vim.notify("No hover",vim.log.levels.INFO)
+      vim.notify("No hover", vim.log.levels.INFO)
       return
     end
     local ct = res.contents
     local lines = {}
-    if type(ct)=='table' and ct.value then
-      lines={'```typescript'}
+    if type(ct) == 'table' and ct.value then
+      lines = { '```typescript' }
       for l in ct.value:gmatch('[^\r\n]+') do
-        if l~='```typescript' then
-          table.insert(lines,l)
+        if l ~= '```typescript' then
+          table.insert(lines, l)
         end
       end
-      table.insert(lines,'```')
+      table.insert(lines, '```')
     end
-    if #lines>0 then
-      vim.lsp.util.open_floating_preview(lines,'markdown',{
-        border='single',
-        max_width=80,
-        focusable=true,
-        zindex=50
+    if #lines > 0 then
+      vim.lsp.util.open_floating_preview(lines, 'markdown', {
+        border = 'single',
+        max_width = 80,
+        focusable = true,
+        zindex = 50
       })
     else
-      vim.notify('Empty hover',vim.log.levels.INFO)
+      vim.notify('Empty hover', vim.log.levels.INFO)
     end
   end)
-end,{desc='Hover Documentation (typescript fallback)'})
+end, { desc = 'LSP: Hover Documentation' })
