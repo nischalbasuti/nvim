@@ -20,43 +20,49 @@ local servers = {
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(client, bufnr)
-  if client.server_capabilities.documentSymbolProvider then
-    navic.attach(client, bufnr)
-    navbuddy.attach(client, bufnr)
-  end
+-- LSP keymaps and attach handlers via LspAttach autocommand (Neovim 0.11+)
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspConfig', { clear = true }),
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    local bufnr = ev.buf
 
-  -- Buffer-local keymaps
-  local nmap = function(keys, func, desc)
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = 'LSP: ' .. (desc or '') })
-  end
+    if client and client.server_capabilities.documentSymbolProvider then
+      navic.attach(client, bufnr)
+      navbuddy.attach(client, bufnr)
+    end
 
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    -- Buffer-local keymaps
+    local nmap = function(keys, func, desc)
+      vim.keymap.set('n', keys, func, { buffer = bufnr, desc = 'LSP: ' .. (desc or '') })
+    end
 
-  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation (Telescope)')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-  nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
-  nmap('<leader>gr', function()
-    require('telescope.builtin').lsp_references{ path_display = { "truncate" } }
-  end, '[G]oto [R]eferences (Telescope)')
+    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+    nmap('<leader>gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation (Telescope)')
+    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 
-  nmap('<leader>K', vim.lsp.buf.signature_help, 'Signature Help')
+    nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
+    nmap('<leader>gr', function()
+      require('telescope.builtin').lsp_references{ path_display = { "truncate" } }
+    end, '[G]oto [R]eferences (Telescope)')
 
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-  nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-  nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-  nmap('<leader>wl', function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, '[W]orkspace [L]ist Folders')
+    nmap('<leader>K', vim.lsp.buf.signature_help, 'Signature Help')
 
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-end
+    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+    nmap('<leader>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, '[W]orkspace [L]ist Folders')
+
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  end,
+})
 
 -- Setup mason so it can manage external tooling
 require('mason').setup({
@@ -74,7 +80,6 @@ mason_lspconfig.setup({
 for server_name, server_config in pairs(servers) do
   vim.lsp.config[server_name] = {
     capabilities = capabilities,
-    on_attach = on_attach,
     settings = server_config,
   }
   vim.lsp.enable(server_name)
