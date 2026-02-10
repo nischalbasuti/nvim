@@ -1,11 +1,9 @@
 -- See https://github.com/coder/claudecode.nvim for configuration options
 require("claudecode").setup({
-  opts = {
-    focus_after_send = false,
-    terminal = {
-      provider = "none", -- Disable nvim terminal; no UI actions; server + tools remain available
-    },
-  }
+  focus_after_send = false,
+  terminal = { ---@diagnostic disable-line: missing-fields
+    provider = "none", -- Disable nvim terminal; no UI actions; server + tools remain available
+  },
 })
 
 -- Keymaps with <leader>cc prefix
