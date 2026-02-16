@@ -12,6 +12,10 @@ require('telescope').setup {
       },
       n = {
         ['<C-d>'] = 'delete_buffer',
+        ['<leader>q'] = function(prompt_bufnr)
+          require('telescope.actions').send_to_qflist(prompt_bufnr)
+          vim.cmd('copen')
+        end,
       },
     },
   },

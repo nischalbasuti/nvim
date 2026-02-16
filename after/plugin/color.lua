@@ -1,6 +1,6 @@
 -- Set colorscheme
 
-local transparent = true
+local transparent = false
 require("catppuccin").setup({
     flavour = "mocha", -- latte, frappe, macchiato, mocha
     background = { -- :h background

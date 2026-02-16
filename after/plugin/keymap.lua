@@ -35,3 +35,6 @@ vim.keymap.set( "n", "<leader>nf", ":Neoformat<CR>", { noremap = true, desc='run
 -- quickfix cnext and cprev keymap
 vim.keymap.set( "n", "<leader>cn", ":cnext<CR>", { noremap = true, desc='cnext' })
 vim.keymap.set( "n", "<leader>cp", ":cprevious<CR>", { noremap = true, desc='cprevious' })
+
+vim.keymap.set( "n", "<leader>cj", ":cnext<CR>", { noremap = true, desc='cnext' })
+vim.keymap.set( "n", "<leader>ck", ":cprevious<CR>", { noremap = true, desc='cprevious' })

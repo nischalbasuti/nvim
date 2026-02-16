@@ -43,8 +43,8 @@ require('gitsigns').setup {
 
 vim.keymap.set( "n", "<leader>gg", ":G<CR>", { noremap = true, desc='Git summary' })
 vim.keymap.set( "n", "<leader>gb", ":G blame<CR>", { noremap = true, desc='Git load diffs to quickfix list' })
-vim.keymap.set( "n", "<leader>gdt", ":G difftool<CR>", { noremap = true, desc='Git load diffs to quickfix list' })
-vim.keymap.set( "n", "<leader>gdf", ":Gdiffsplit<CR>", { noremap = true, desc='Show git diff in split window' })
+vim.keymap.set( "n", "<leader>gd", ":G difftool<CR>", { noremap = true, desc='Git load diffs to quickfix list' })
+vim.keymap.set( "n", "<leader>gs", ":Gdiffsplit<CR>", { noremap = true, desc='Show git diff in split window' })
 vim.keymap.set( "n", "<leader>gaf", ":G add @%<CR>", { noremap = true, desc='Show git diff in split window' })
 
 
