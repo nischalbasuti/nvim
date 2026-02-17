@@ -182,7 +182,11 @@ return {
   },
 
   -- Auto-pairs
-  { 'jiangmiao/auto-pairs' },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    opts = {},
+  },
 
   -- Surround
   { 'tpope/vim-surround' },
