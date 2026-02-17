@@ -1,73 +1,93 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
     build = ':TSUpdate',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
     config = function()
-      require('nvim-treesitter.configs').setup({
-        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'javascript', 'vim' },
-        matchup = {
-          enable = false,
-          include_match_words = true,
-          disable_virtual_text = false,
+      require('nvim-treesitter').setup({
+        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'javascript', 'vim', 'vimdoc' },
+      })
+
+      -- Enable treesitter-based highlighting and indentation for all filetypes
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function()
+          pcall(vim.treesitter.start)
+        end,
+      })
+
+      -- Incremental selection keymaps
+      vim.keymap.set('n', '<c-space>', function()
+        require('nvim-treesitter.incremental_selection').init_selection()
+      end, { desc = 'Treesitter init selection' })
+      vim.keymap.set('v', '<c-space>', function()
+        require('nvim-treesitter.incremental_selection').node_incremental()
+      end, { desc = 'Treesitter node incremental' })
+      vim.keymap.set('v', '<c-s>', function()
+        require('nvim-treesitter.incremental_selection').scope_incremental()
+      end, { desc = 'Treesitter scope incremental' })
+      vim.keymap.set('v', '<m-space>', function()
+        require('nvim-treesitter.incremental_selection').node_decremental()
+      end, { desc = 'Treesitter node decremental' })
+    end,
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('nvim-treesitter-textobjects').setup({
+        select = {
+          lookahead = true,
         },
-        highlight = { enable = true },
-        indent = { enable = true, disable = { 'python' } },
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-space>',
-            scope_incremental = '<c-s>',
-            node_decremental = '<m-space>',
-          },
-        },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ['aa'] = '@parameter.outer',
-              ['ia'] = '@parameter.inner',
-              ['af'] = '@function.outer',
-              ['if'] = '@function.inner',
-              ['ac'] = '@class.outer',
-              ['ic'] = '@class.inner',
-            },
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              [']m'] = '@function.outer',
-              [']]'] = '@class.outer',
-            },
-            goto_next_end = {
-              [']M'] = '@function.outer',
-              [']['] = '@class.outer',
-            },
-            goto_previous_start = {
-              ['[m'] = '@function.outer',
-              ['[['] = '@class.outer',
-            },
-            goto_previous_end = {
-              ['[M'] = '@function.outer',
-              ['[]'] = '@class.outer',
-            },
-          },
-          swap = {
-            enable = true,
-            swap_next = {
-              ['<leader>a'] = '@parameter.inner',
-            },
-            swap_previous = {
-              ['<leader>A'] = '@parameter.inner',
-            },
-          },
+        move = {
+          set_jumps = true,
         },
       })
+
+      local select = require('nvim-treesitter-textobjects.select')
+      local move = require('nvim-treesitter-textobjects.move')
+      local swap = require('nvim-treesitter-textobjects.swap')
+
+      -- Select textobjects
+      local select_maps = {
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+      }
+      for key, query in pairs(select_maps) do
+        vim.keymap.set({ 'x', 'o' }, key, function()
+          select.select_textobject(query, 'textobjects')
+        end, { desc = 'Select ' .. query })
+      end
+
+      -- Move to next/previous
+      local move_maps = {
+        [']m'] = { fn = move.goto_next_start, query = '@function.outer', desc = 'Next function start' },
+        [']]'] = { fn = move.goto_next_start, query = '@class.outer', desc = 'Next class start' },
+        [']M'] = { fn = move.goto_next_end, query = '@function.outer', desc = 'Next function end' },
+        [']['] = { fn = move.goto_next_end, query = '@class.outer', desc = 'Next class end' },
+        ['[m'] = { fn = move.goto_previous_start, query = '@function.outer', desc = 'Prev function start' },
+        ['[['] = { fn = move.goto_previous_start, query = '@class.outer', desc = 'Prev class start' },
+        ['[M'] = { fn = move.goto_previous_end, query = '@function.outer', desc = 'Prev function end' },
+        ['[]'] = { fn = move.goto_previous_end, query = '@class.outer', desc = 'Prev class end' },
+      }
+      for key, map in pairs(move_maps) do
+        vim.keymap.set({ 'n', 'x', 'o' }, key, function()
+          map.fn(map.query, 'textobjects')
+        end, { desc = map.desc })
+      end
+
+      -- Swap parameters
+      vim.keymap.set('n', '<leader>a', function()
+        swap.swap_next('@parameter.inner')
+      end, { desc = 'Swap next parameter' })
+      vim.keymap.set('n', '<leader>A', function()
+        swap.swap_previous('@parameter.inner')
+      end, { desc = 'Swap previous parameter' })
     end,
   },
 
