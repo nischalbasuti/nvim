@@ -4,8 +4,20 @@ return {
     lazy = false,
     build = ':TSUpdate',
     config = function()
+      -- Load query module first to initialize language mappings
+      pcall(require, 'vim.treesitter.query')
+
       require('nvim-treesitter').setup({
         ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'javascript', 'vim', 'vimdoc' },
+        sync_install = false,
+        auto_install = true,
+        highlight = {
+          enable = true,
+          disable = {},
+        },
+        indent = {
+          enable = true,
+        },
       })
 
       -- Enable treesitter-based highlighting and indentation for all filetypes

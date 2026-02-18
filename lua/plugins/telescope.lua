@@ -4,6 +4,7 @@ return {
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
       { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make', cond = vim.fn.executable('make') == 1 },
       'nvim-telescope/telescope-file-browser.nvim',
       'nvim-telescope/telescope-ui-select.nvim',
@@ -17,6 +18,9 @@ return {
           layout_strategy = 'vertical',
           path_display = { 'truncate' },
           file_ignore_patterns = { 'node_modules' },
+          preview = {
+            treesitter = false,
+          },
           mappings = {
             i = {
               ['<C-u>'] = false,
