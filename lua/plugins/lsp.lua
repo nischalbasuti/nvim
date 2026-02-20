@@ -179,7 +179,9 @@ return {
 
       -- Custom hover
       vim.keymap.set('n', 'K', function()
-        local params = vim.lsp.util.make_position_params()
+        local clients = vim.lsp.get_clients({ bufnr = 0 })
+        local position_encoding = clients[1] and clients[1].offset_encoding or 'utf-16'
+        local params = vim.lsp.util.make_position_params(0, position_encoding)
         vim.lsp.buf_request(0, 'textDocument/hover', params, function(err, res)
           if err or not res or not res.contents then
             vim.notify('No hover', vim.log.levels.INFO)

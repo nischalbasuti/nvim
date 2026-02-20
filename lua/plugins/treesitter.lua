@@ -4,20 +4,14 @@ return {
     lazy = false,
     build = ':TSUpdate',
     config = function()
-      -- Load query module first to initialize language mappings
-      pcall(require, 'vim.treesitter.query')
+      -- Add nvim-treesitter's runtime dir to rtp so queries are found
+      local ts_runtime = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy', 'nvim-treesitter', 'runtime')
+      vim.opt.rtp:prepend(ts_runtime)
 
       require('nvim-treesitter').setup({
         ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'javascript', 'vim', 'vimdoc' },
         sync_install = false,
         auto_install = true,
-        highlight = {
-          enable = true,
-          disable = {},
-        },
-        indent = {
-          enable = true,
-        },
       })
 
       -- Enable treesitter-based highlighting and indentation for all filetypes
