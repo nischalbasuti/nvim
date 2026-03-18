@@ -13,10 +13,13 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({ import = 'plugins' }, {
-  install = { colorscheme = { 'catppuccin' } },
+  install = { colorscheme = { 'everforest' } },
   checker = { enabled = false },
   change_detection = { notify = false },
 })
 
 require('config.keymaps')
 require('config.autocmds')
+
+
+vim.cmd.colorscheme('everforest')

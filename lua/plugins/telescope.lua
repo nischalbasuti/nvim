@@ -1,7 +1,7 @@
 return {
   {
     'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
+    branch = 'master',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
@@ -18,9 +18,6 @@ return {
           layout_strategy = 'vertical',
           path_display = { 'truncate' },
           file_ignore_patterns = { 'node_modules' },
-          preview = {
-            treesitter = false,
-          },
           mappings = {
             i = {
               ['<C-u>'] = false,
@@ -28,6 +25,7 @@ return {
             },
             n = {
               ['<C-d>'] = 'delete_buffer',
+              ['<C-q>'] = 'send_to_qflist',
               ['<leader>q'] = function(prompt_bufnr)
                 require('telescope.actions').send_to_qflist(prompt_bufnr)
                 vim.cmd('copen')
