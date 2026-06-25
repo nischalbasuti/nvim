@@ -23,6 +23,20 @@ vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
 vim.opt.mouse = 'a'
 
+-- Clipboard: over SSH, route the + register through OSC 52 so yanks reach the
+-- SSH client's clipboard rather than the server's. Locally, leave Nvim's
+-- default (pbcopy) provider untouched. Mirrors the tmux set-clipboard setup.
+-- SSH_CONNECTION (not SSH_TTY) is the one tmux refreshes via update-environment,
+-- so it's the reliable signal for nvim launched inside a tmux pane.
+if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
+  local osc52 = require('vim.ui.clipboard.osc52')
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
+    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
+  }
+end
+
 -- Search
 vim.opt.hlsearch = false
 vim.opt.ignorecase = true
