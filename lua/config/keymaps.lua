@@ -9,6 +9,10 @@ vim.keymap.set('n', '<leader>l', '<C-w><C-l>', { noremap = true, desc = 'Move to
 vim.keymap.set('n', '<leader>j', '<C-w><C-j>', { noremap = true, desc = 'Move to below split' })
 vim.keymap.set('n', '<leader>k', '<C-w><C-k>', { noremap = true, desc = 'Move to above split' })
 
+-- Scroll the viewport a few lines at a time
+vim.keymap.set({ 'n', 'x' }, '<C-j>', '3<C-e>', { noremap = true, desc = 'Scroll down 3 lines' })
+vim.keymap.set({ 'n', 'x' }, '<C-k>', '3<C-y>', { noremap = true, desc = 'Scroll up 3 lines' })
+
 -- Copy current file path to system clipboard
 vim.keymap.set('n', '<leader>yf', function()
   vim.fn.setreg('+', vim.fn.expand('%'))
