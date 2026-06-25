@@ -4,7 +4,6 @@
   "blink.cmp": { "branch": "main", "commit": "451168851e8e2466bc97ee3e026c3dcb9141ce07" },
   "catppuccin": { "branch": "main", "commit": "a7788416689dbefea659d9e9415c87926b0ba5d8" },
   "claudecode.nvim": { "branch": "main", "commit": "432121f0f5b9bda041030d1e9e83b7ba3a93dd8f" },
-  "codediff.nvim": { "branch": "main", "commit": "5d6aa753797a0ebda14dd769ed03d12a320d689b" },
   "difftastic.nvim": { "branch": "main", "commit": "6041ef0244b3fecf3b7f07de9af8cfbf8dbc4945" },
   "everforest-nvim": { "branch": "main", "commit": "323e7633034a8068636a11597cec03bca5465c50" },
   "fidget.nvim": { "branch": "main", "commit": "0ba1e16d07627532b6cae915cc992ecac249fb97" },
