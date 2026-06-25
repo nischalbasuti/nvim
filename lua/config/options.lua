@@ -23,19 +23,25 @@ vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
 vim.opt.mouse = 'a'
 
--- Clipboard: over SSH, route the + register through OSC 52 so yanks reach the
--- SSH client's clipboard rather than the server's. Locally, leave Nvim's
--- default (pbcopy) provider untouched. Mirrors the tmux set-clipboard setup.
--- SSH_CONNECTION (not SSH_TTY) is the one tmux refreshes via update-environment,
--- so it's the reliable signal for nvim launched inside a tmux pane.
-if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
-  local osc52 = require('vim.ui.clipboard.osc52')
-  vim.g.clipboard = {
-    name = 'OSC 52',
-    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
-    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
-  }
+-- Clipboard: every yank to the + register goes to BOTH the local clipboard
+-- (pbcopy) and, via OSC 52, whatever terminal is attached -- so over SSH it also
+-- lands in the client's clipboard. No SSH detection needed: OSC 52 self-targets
+-- the attached terminal, and tmux forwards it because set-clipboard is on.
+-- Mirrors the tmux pbcopy + set-clipboard setup. Paste stays on pbpaste (the
+-- reliable path); over SSH, paste from the client with the terminal's own paste.
+local osc52 = require('vim.ui.clipboard.osc52')
+local function copy(reg)
+  local emit_osc52 = osc52.copy(reg)
+  return function(lines, regtype)
+    vim.fn.system({ 'pbcopy' }, table.concat(lines, '\n'))
+    emit_osc52(lines, regtype)
+  end
 end
+vim.g.clipboard = {
+  name = 'pbcopy+osc52',
+  copy = { ['+'] = copy('+'), ['*'] = copy('*') },
+  paste = { ['+'] = { 'pbpaste' }, ['*'] = { 'pbpaste' } },
+}
 
 -- Search
 vim.opt.hlsearch = false
