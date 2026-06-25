@@ -1,26 +1,14 @@
 return {
   {
-    'supermaven-inc/supermaven-nvim',
-    opts = {
-      keymaps = {
-        accept_suggestion = '<C-l>',
-      },
-      log_level = 'info',
-      disable_inline_completion = false,
-      disable_keymaps = false,
-      condition = function()
-        return false
-      end,
-    },
-  },
-
-  {
     'coder/claudecode.nvim',
     config = function()
       require('claudecode').setup({
         focus_after_send = false,
         terminal = {
           provider = 'none',
+        },
+        diff_opts = {
+          layout = 'horizontal',
         },
       })
 
