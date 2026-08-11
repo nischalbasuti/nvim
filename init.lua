@@ -22,4 +22,6 @@ require('config.keymaps')
 require('config.autocmds')
 
 
-vim.cmd.colorscheme('catppuccin')
+-- Sets catppuccin + `background` from the desktop light/dark mode, and keeps
+-- watching for changes. See lua/config/theme.lua.
+require('config.theme').setup()
