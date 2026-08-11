@@ -39,9 +39,12 @@ end
 ---@param mode string|nil "dark" | "light"; detected when omitted
 function M.apply(mode)
   mode = mode or detect()
-  if vim.o.background == mode and vim.g.colors_name == COLORSCHEME then
+  -- Track the applied mode ourselves: colors_name ends up flavour-suffixed
+  -- (catppuccin-latte / -mocha), so it can't be compared against COLORSCHEME.
+  if M._mode == mode and vim.o.background == mode then
     return
   end
+  M._mode = mode
   vim.o.background = mode
   -- catppuccin picks its flavour (background.light/dark) at load time, so
   -- re-apply after the switch.
