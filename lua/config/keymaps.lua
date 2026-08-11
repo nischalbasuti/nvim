@@ -18,6 +18,27 @@ vim.keymap.set('n', '<leader>yf', function()
   vim.fn.setreg('+', vim.fn.expand('%'))
 end, { desc = 'Copy file path to clipboard' })
 
+-- Copy file#Lline reference to system clipboard (harness-neutral file+line pointer)
+vim.keymap.set({ 'n', 'v' }, '<leader>yl', function()
+  local file = vim.fn.expand('%')
+  local mode = vim.fn.mode()
+  local ref
+
+  if mode == 'v' or mode == 'V' or mode == '\22' then
+    local start_line, end_line = vim.fn.line('v'), vim.fn.line('.')
+    if start_line > end_line then
+      start_line, end_line = end_line, start_line
+    end
+    ref = start_line == end_line and string.format('%s#L%d', file, start_line)
+      or string.format('%s#L%d-L%d', file, start_line, end_line)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'nx', false)
+  else
+    ref = string.format('%s#L%d', file, vim.fn.line('.'))
+  end
+
+  vim.fn.setreg('+', ref)
+end, { desc = 'Copy file:line reference to clipboard' })
+
 -- System clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true, desc = 'Yank to clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>yy', '"+y', { noremap = true, desc = 'Yank to clipboard' })
