@@ -67,3 +67,22 @@ vim.keymap.set('n', '<leader>ai', function()
   local col = vim.fn.col('.')
   vim.cmd('!cursor . && cursor --goto ' .. file .. ':' .. line .. ':' .. col)
 end, { desc = 'Open Cursor at current position' })
+
+vim.keymap.set("n", "<leader>dvo", function()
+  local builtin = require("telescope.builtin")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+
+  builtin.git_branches({
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+
+        vim.cmd("DiffviewOpen " .. selection.value .. "...HEAD")
+      end)
+
+      return true
+    end,
+  })
+end, { desc = "Diff branch against HEAD" })
