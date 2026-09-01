@@ -6,7 +6,7 @@ return {
     priority = 1000,
     opts = {
       -- 'auto' => flavour follows vim.o.background via the map below, which is
-      -- what config.theme flips from the desktop light/dark mode. Pinning a
+      -- what config.theme flips from the pushed light/dark mode. Pinning a
       -- flavour here would instead force vim.o.background to match it.
       flavour = 'auto',
       background = {
