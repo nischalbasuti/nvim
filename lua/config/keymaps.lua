@@ -18,26 +18,63 @@ vim.keymap.set('n', '<leader>yf', function()
   vim.fn.setreg('+', vim.fn.expand('%'))
 end, { desc = 'Copy file path to clipboard' })
 
--- Copy file#Lline reference to system clipboard (harness-neutral file+line pointer)
-vim.keymap.set({ 'n', 'v' }, '<leader>yl', function()
+local function file_ref(include_normal_line)
   local file = vim.fn.expand('%')
   local mode = vim.fn.mode()
-  local ref
 
   if mode == 'v' or mode == 'V' or mode == '\22' then
     local start_line, end_line = vim.fn.line('v'), vim.fn.line('.')
     if start_line > end_line then
       start_line, end_line = end_line, start_line
     end
-    ref = start_line == end_line and string.format('%s#L%d', file, start_line)
+    local ref = start_line == end_line and string.format('%s#L%d', file, start_line)
       or string.format('%s#L%d-L%d', file, start_line, end_line)
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'nx', false)
-  else
-    ref = string.format('%s#L%d', file, vim.fn.line('.'))
+    return ref
   end
 
-  vim.fn.setreg('+', ref)
+  if include_normal_line then
+    return string.format('%s#L%d', file, vim.fn.line('.'))
+  end
+
+  return file
+end
+
+-- Copy file#Lline reference to system clipboard (harness-neutral file+line pointer)
+vim.keymap.set({ 'n', 'v' }, '<leader>yl', function()
+  vim.fn.setreg('+', file_ref(true))
 end, { desc = 'Copy file:line reference to clipboard' })
+
+local function adjacent_tmux_pane()
+  for _, direction in ipairs({ '{right-of}', '{left-of}', '{down-of}', '{up-of}' }) do
+    local pane = vim.fn.system({ 'tmux', 'display-message', '-p', '-t', direction, '#{pane_id}' })
+    if vim.v.shell_error == 0 then
+      pane = vim.trim(pane)
+      if pane ~= '' then
+        return pane
+      end
+    end
+  end
+end
+
+-- Send the file path or selected line range to an adjacent tmux pane without submitting it
+vim.keymap.set({ 'n', 'v' }, '<leader>tl', function()
+  if not vim.env.TMUX then
+    vim.notify('Not running inside tmux', vim.log.levels.WARN)
+    return
+  end
+
+  local target = adjacent_tmux_pane()
+  if not target then
+    vim.notify('No adjacent tmux pane found', vim.log.levels.WARN)
+    return
+  end
+
+  vim.fn.system({ 'tmux', 'send-keys', '-t', target, '-l', file_ref(false) })
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Failed to send reference to tmux pane', vim.log.levels.ERROR)
+  end
+end, { desc = 'Send file reference to tmux pane' })
 
 -- System clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true, desc = 'Yank to clipboard' })
