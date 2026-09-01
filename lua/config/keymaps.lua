@@ -68,10 +68,10 @@ vim.keymap.set('n', '<leader>ai', function()
   vim.cmd('!cursor . && cursor --goto ' .. file .. ':' .. line .. ':' .. col)
 end, { desc = 'Open Cursor at current position' })
 
-vim.keymap.set("n", "<leader>dvo", function()
-  local builtin = require("telescope.builtin")
-  local actions = require("telescope.actions")
-  local action_state = require("telescope.actions.state")
+vim.keymap.set('n', '<leader>dvo', function()
+  local builtin = require('telescope.builtin')
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
 
   builtin.git_branches({
     attach_mappings = function(prompt_bufnr)
@@ -79,10 +79,48 @@ vim.keymap.set("n", "<leader>dvo", function()
         local selection = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
 
-        vim.cmd("DiffviewOpen " .. selection.value .. "...HEAD")
+        vim.cmd('DiffviewOpen ' .. selection.value .. '...HEAD')
       end)
 
       return true
     end,
   })
-end, { desc = "Diff branch against HEAD" })
+end, { desc = 'Diff branch against HEAD' })
+
+local function select_git_commit(prompt_title, on_select)
+  local builtin = require('telescope.builtin')
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+
+  builtin.git_commits({
+    prompt_title = prompt_title,
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+
+        if selection then
+          vim.schedule(function()
+            on_select(selection.value)
+          end)
+        end
+      end)
+
+      return true
+    end,
+  })
+end
+
+vim.keymap.set('n', '<leader>dvc', function()
+  select_git_commit('Commit', function(commit)
+    vim.cmd('DiffviewOpen ' .. commit .. '^!')
+  end)
+end, { desc = 'Diff changes in commit' })
+
+vim.keymap.set('n', '<leader>dvr', function()
+  select_git_commit('Older commit', function(older_commit)
+    select_git_commit('Newer commit', function(newer_commit)
+      vim.cmd('DiffviewOpen ' .. older_commit .. '..' .. newer_commit)
+    end)
+  end)
+end, { desc = 'Diff range between commits' })
