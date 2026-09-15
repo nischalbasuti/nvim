@@ -161,3 +161,69 @@ vim.keymap.set('n', '<leader>dvr', function()
     end)
   end)
 end, { desc = 'Diff range between commits' })
+
+-- Compare gitsigns against a chosen commit in normal buffers (LSP etc. keep working)
+vim.keymap.set('n', '<leader>dvsc', function()
+  select_git_commit('Gitsigns base', function(commit)
+    require('gitsigns').change_base(commit, true)
+    vim.notify('gitsigns base: ' .. commit)
+  end)
+end, { desc = 'Gitsigns: diff against commit' })
+
+vim.keymap.set('n', '<leader>dvsb', function()
+  local builtin = require('telescope.builtin')
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+
+  builtin.git_branches({
+    prompt_title = 'Gitsigns base',
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if selection then
+          require('gitsigns').change_base(selection.value, true)
+          vim.notify('gitsigns base: ' .. selection.value)
+        end
+      end)
+      return true
+    end,
+  })
+end, { desc = 'Gitsigns: diff against branch' })
+
+vim.keymap.set('n', '<leader>dvsr', function()
+  require('gitsigns').reset_base(true)
+  vim.notify('gitsigns base: index')
+end, { desc = 'Gitsigns: reset base to index' })
+
+vim.keymap.set('n', '<leader>dvsq', function()
+  require('gitsigns').setqflist('all')
+end, { desc = 'Gitsigns: all hunks vs base to quickfix' })
+
+vim.keymap.set('n', '<leader>dvst', function()
+  require('gitsigns').setqflist('all', { open = false }, function(err)
+    if err then
+      vim.notify(err, vim.log.levels.ERROR)
+      return
+    end
+    require('telescope.builtin').quickfix({ prompt_title = 'Gitsigns hunks' })
+  end)
+end, { desc = 'Gitsigns: all hunks vs base in Telescope' })
+
+vim.keymap.set('n', '<leader>dvf', function()
+  local base = require('gitsigns.config').config.base
+  local toplevel = vim.trim(vim.fn.system({ 'git', 'rev-parse', '--show-toplevel' }))
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Not in a git repo', vim.log.levels.WARN)
+    return
+  end
+  local cmd = { 'git', 'diff', '--name-only', '--relative' }
+  if base then
+    table.insert(cmd, base)
+  end
+  require('telescope.builtin').find_files({
+    prompt_title = 'Changed files vs ' .. (base or 'index'),
+    cwd = toplevel,
+    find_command = cmd,
+  })
+end, { desc = 'Gitsigns: changed files vs base in Telescope' })
