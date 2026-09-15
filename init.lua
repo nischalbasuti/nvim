@@ -13,7 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({ import = 'plugins' }, {
-  install = { colorscheme = { 'everforest' } },
+  install = { colorscheme = { 'catppuccin' } },
   checker = { enabled = false },
   change_detection = { notify = false },
 })
