@@ -62,7 +62,7 @@ vim.opt.colorcolumn = '81,121'
 vim.opt.cursorline = true
 vim.opt.termguicolors = true
 vim.opt.list = true
-vim.opt.listchars:append('eol:↴')
+-- vim.opt.listchars:append('eol:↴')
 
 -- Performance
 vim.opt.updatetime = 250
