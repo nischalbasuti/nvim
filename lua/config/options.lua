@@ -30,17 +30,22 @@ vim.opt.mouse = 'a'
 -- Mirrors the tmux pbcopy + set-clipboard setup. Paste stays on pbpaste (the
 -- reliable path); over SSH, paste from the client with the terminal's own paste.
 local osc52 = require('vim.ui.clipboard.osc52')
+local is_mac = vim.fn.has('mac') == 1
 local function copy(reg)
   local emit_osc52 = osc52.copy(reg)
   return function(lines, regtype)
-    vim.fn.system({ 'pbcopy' }, table.concat(lines, '\n'))
+    if is_mac then
+      vim.fn.system({ 'pbcopy' }, table.concat(lines, '\n'))
+    end
     emit_osc52(lines, regtype)
   end
 end
 vim.g.clipboard = {
   name = 'pbcopy+osc52',
   copy = { ['+'] = copy('+'), ['*'] = copy('*') },
-  paste = { ['+'] = { 'pbpaste' }, ['*'] = { 'pbpaste' } },
+  paste = is_mac
+      and { ['+'] = { 'pbpaste' }, ['*'] = { 'pbpaste' } }
+    or { ['+'] = osc52.paste, ['*'] = osc52.paste },
 }
 
 -- Search
