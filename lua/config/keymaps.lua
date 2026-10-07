@@ -88,6 +88,11 @@ vim.keymap.set({ 'n', 'v' }, '<leader>0', '"0p', { noremap = true, desc = 'Paste
 -- Switch to last buffer
 vim.keymap.set('n', '<leader><Tab>', ':e #<CR>', { noremap = true, desc = 'Switch to last buffer' })
 
+-- Insert the current local date and time at the cursor
+vim.keymap.set('n', '<leader>id', function()
+  vim.api.nvim_put({ os.date('%Y-%m-%d %H:%M:%S') }, 'c', true, true)
+end, { desc = 'Insert current date and time' })
+
 -- Formatter
 vim.keymap.set('n', '<leader>nf', ':Neoformat<CR>', { noremap = true, desc = 'Run Neoformat' })
 
