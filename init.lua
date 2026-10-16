@@ -13,7 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({ import = 'plugins' }, {
-  install = { colorscheme = { 'catppuccin' } },
+  install = { colorscheme = { 'everforest' } },
   checker = { enabled = false },
   change_detection = { notify = false },
 })
@@ -22,6 +22,6 @@ require('config.keymaps')
 require('config.autocmds')
 
 
--- Sets catppuccin + `background` from the desktop light/dark mode, and keeps
+-- Sets Everforest + `background` from the desktop light/dark mode, and keeps
 -- watching for changes. See lua/config/theme.lua.
 require('config.theme').setup()

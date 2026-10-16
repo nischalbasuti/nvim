@@ -8,7 +8,7 @@
 
 local M = {}
 
-local COLORSCHEME = 'catppuccin'
+local COLORSCHEME = 'everforest'
 
 local function state_file()
   local dir = vim.env.XDG_STATE_HOME
@@ -39,15 +39,12 @@ end
 ---@param mode string|nil "dark" | "light"; detected when omitted
 function M.apply(mode)
   mode = mode or detect()
-  -- Track the applied mode ourselves: colors_name ends up flavour-suffixed
-  -- (catppuccin-latte / -mocha), so it can't be compared against COLORSCHEME.
   if M._mode == mode and vim.o.background == mode then
     return
   end
   M._mode = mode
   vim.o.background = mode
-  -- catppuccin picks its flavour (background.light/dark) at load time, so
-  -- re-apply after the switch.
+  -- Everforest reads vim.o.background when the colorscheme is applied.
   pcall(vim.cmd.colorscheme, COLORSCHEME)
 end
 
